@@ -6,20 +6,28 @@ import { useState } from 'react';
 import 'react-aspect-ratio/aspect-ratio.css';
 // import { useNavigate, useLocation } from 'react-router-dom';
 import Router from 'next/router';
+import {useRouter} from 'next/router';
 import { NextPage } from 'next';
 
-const RoomPage: NextPage = () => {
+const RoomPage: NextPage = (req) => {
   const [numParticipants, setNumParticipants] = useState(0);
   const [displayOptions, setDisplayOptions] = useState<DisplayOptions>({
     stageLayout: 'grid',
     showStats: false,
   });
+
+  const router = useRouter()
+  const { roomId } = router.query
+
+
+  
   const query = new URLSearchParams('http://localhost:3000/room/room?url=wss%3A%2F%2Flivekit.krejci.email&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTkyNjQyMzksImlzcyI6IkFQSXlCdG9lcE5hdHNqeSIsImp0aSI6InRvbnlfc3RhcmsiLCJuYW1lIjoiVG9ueSBTdGFyayIsIm5iZiI6MTY2MzI2NDIzOSwic3ViIjoidG9ueV9zdGFyayIsInZpZGVvIjp7InJvb20iOiJzdGFyay10b3dlciIsInJvb21Kb2luIjp0cnVlfX0.5tqBfRrUHHsdMkA5kFGQMYRAzeNkvz3f7t7oOBsdP0c&videoEnabled=1&audioEnabled=1&simulcast=1&dynacast=1&adaptiveStream=1&videoDeviceId=240092b45667532940b32497114f7a559a9652f96cdff794c3049ac286ae8e41');
   // const url = query.get('url');
   // const token = query.get('token');
 
   const url = 'wss://livekit.krejci.email';
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTkyNjQyMzksImlzcyI6IkFQSXlCdG9lcE5hdHNqeSIsImp0aSI6InRvbnlfc3RhcmsiLCJuYW1lIjoiVG9ueSBTdGFyayIsIm5iZiI6MTY2MzI2NDIzOSwic3ViIjoidG9ueV9zdGFyayIsInZpZGVvIjp7InJvb20iOiJzdGFyay10b3dlciIsInJvb21Kb2luIjp0cnVlfX0.5tqBfRrUHHsdMkA5kFGQMYRAzeNkvz3f7t7oOBsdP0c';
+  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6InZmZC1ucGItaGdrIn0sImlhdCI6MTY2NTUxOTMyMCwibmJmIjoxNjY1NTE5MzIwLCJleHAiOjE2NjU1NDA5MjAsImlzcyI6IkFQSXlCdG9lcE5hdHNqeSIsInN1YiI6ImtrcnlzdG9mIiwianRpIjoia2tyeXN0b2YifQ.zUo1SRaujcBjwMI3zoJ9Lms_eqvPfa33UvBtsUMTC2Y';
+  //             eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6InZmZC1ucGItaGdrIn0sImlhdCI6MTY2NTUxOTc4MSwibmJmIjoxNjY1NTE5NzgxLCJleHAiOjE2NjU1NDEzODEsImlzcyI6IkFQSXlCdG9lcE5hdHNqeSIsInN1YiI6ImtrcnlzdG9mIiwianRpIjoia2tyeXN0b2YifQ.rh_ii87YLOp4mV-s7SqnOFFwg9xgGjBw6n5R0v-_tA0
   const recorder = query.get('recorder');
 
   if (!url || !token) {
@@ -55,6 +63,7 @@ const RoomPage: NextPage = () => {
       <div className="roomContainer">
         <div className="topBar">
           <h2>LiveKit Video</h2>
+          <p>{roomId}</p>
           <div className="right">
             <div>
               <input
