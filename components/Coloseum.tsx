@@ -1,33 +1,30 @@
 
 // import React from 'react'
 import { AudioRenderer, useParticipant, VideoRenderer } from '@livekit/react-components'
+import { motion, useAnimationControls } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-const CircleVideo = styled.div`
+const CircleVideo = styled(motion.div)`
     position: absolute;
     top: 50%;
     left: 50%;
     width: 200px;
     height: 200px;
-    /* margin: calc( -100px / 2 ); */
     translate: -50% -50%;
     background: black;
     border-radius: 50%;
-    /* transition: all 5000ms ease-in-out; */
     background-image: url('img/face.png');
     background-size: cover;
     border: 2px solid rgba(255, 255, 255, 0.2);
 `
 
-const ColoseumBox = styled.div`
+const ColoseumBox = styled(motion.div)`
       position: relative;
-      width: 50vw;
-      height: 50vw;
-      /* margin: calc(100px / 2 + 0px); */
+      width: 80vh;
+      height: 80vh;
       margin: 0 auto;
       top: 50%;
-      /* left: 50%; */
       translate: 0% -50%;
 
       &:before {
@@ -35,7 +32,7 @@ const ColoseumBox = styled.div`
         position: absolute;
         top: 0;
         left: 0;
-        border: 2px dashed rgba(128, 128, 128, 0.137);
+        /* border: 2px dashed rgba(128, 128, 128, 0.137); */
         width: calc(100% - 2px * 2);
         height: calc(100% - 2px * 2);
         /* border-radius: 50%; */
@@ -46,40 +43,53 @@ const ColoseumBox = styled.div`
 
 const getPositions = (width: number, sum: number) => {
 
-
         let result = []
 
         let angle = 90
-        let dangle = 360 / sum // rozdeleni 360 do vysecu podle poctu prvku
+        let dangle = 360 / sum
 
         for( let i = 0; i < sum; ++i ){
 
-        angle += dangle
+          angle += dangle
 
-        const b = width / 2
-        const n = sum
+          const b = width / 2
+          const n = sum
 
-        const circleR = (b * Math.sin(Math.PI/n)) / (Math.sin(Math.PI/n) + 1)        
-        // circleR *=.8;
+          const circleR = (b * Math.sin(Math.PI/n)) / (Math.sin(Math.PI/n) + 1)   
 
-        result.push({
-            width: circleR*2 + 'px',
-            height: circleR*2 + 'px',
-            transform: `rotate(${angle}deg) translate(${b-circleR}px) rotate(-${angle}deg)`
-        })
+          // gap between circles
+          // circleR -= 5;
+
+            result.push({
+                size: {
+
+                  width: circleR*2 + 'px',
+                  height: circleR*2 + 'px',
+                },
+                preRotate: `rotate(${angle}deg) translate(0px) rotate(-${angle}deg)`,
+                transform: `rotate(${angle}deg) translate(${b-circleR}px) rotate(-${angle}deg)`
+            })
 
         }
 
         return result
-
     }
-  
-  
 
-const Coloseum = () => {
 
-    const [people] = useState(2)
     
+const Coloseum = () => {
+      
+      const [people, setPeople] = useState(6)
+      
+      // animation control
+      const controls = useAnimationControls()
+      // animatin keyframes
+      const sequence = async () => {
+          await controls.start({scale: 0.85, transition: {type: "tween",duration: 0.20}})
+          await controls.start({scale: 1.05, transition: {type: "tween",duration: 0.20}})
+          return await controls.start({scale: 1})
+      }
+
     const componentRef = useRef()
     const { width, height } = useContainerDimensions(componentRef)
 
@@ -87,20 +97,30 @@ const Coloseum = () => {
 
     useEffect(() => {
         setPositions(getPositions(width, people))
-        // console.log(props);
-        
-        
+        sequence()
     }, [people, width])
     
-
-
+  
     return <>
-        <ColoseumBox ref={componentRef}>
-            {
-                positions.map( p => {
+        <div style={{position: 'absolute'}}>
+            <button onClick={()=> setPeople(people+1)}>Add</button>
+            <button onClick={()=> setPeople(people-1)}>Delete</button>
+        </div>
 
-                  return  <CircleVideo style={p}/>
-                })
+        <ColoseumBox ref={componentRef}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          animate={controls}
+        >
+            {
+              positions.map( (p, i) => {
+                
+                      if(i+1 === people){
+                        return <CircleVideo key={i} animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.5}}} initial={{transform: p.preRotate, width: 0, height: 0}}/>
+                      }else{
+                        return <CircleVideo key={i}  animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.5}}} style={p.size}  whileTap={{ scale: 0.8 }}/>
+                      }
+              }) 
             }
         </ColoseumBox>
     </>
