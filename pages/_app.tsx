@@ -9,6 +9,7 @@ const theme: DefaultTheme = {
   colors: {
     primary: '#FFCC70',
     secondary: '#FFFFE0',
+    saturation: '#FFA500',
     black: {
       "100": 'rgba(21, 19, 14, 0.3)',
       "200": 'rgba(21, 19, 14, 0.5)',
