@@ -100,4 +100,25 @@ const Button = styled.button`
   }
 `
 
-export { Container, Main, Title, Description, CodeTag, Avatar, Button, Playfull }
+const Input = styled.input`
+    background: ${({ theme }) => theme.colors.white[200]};
+    border: 2px solid ${({ theme }) => theme.colors.white[300]};
+    color: white;
+    font-family: inherit;
+    padding: 6px 10px 7px 10px;
+    font-size: 1rem;
+    border-radius: 7px;
+    outline: none;
+    transition: all 200ms;
+    
+    &:hover{
+        background: ${({ theme }) => theme.colors.white[100]};     
+    }
+    
+    &:focus, :active{
+        border-color: ${({ theme }) => theme.colors.primary};
+        background: ${({ theme }) => theme.colors.white[200]};
+    }
+`
+
+export { Container, Main, Title, Description, CodeTag, Avatar, Button, Playfull, Input }
