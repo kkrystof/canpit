@@ -10,6 +10,30 @@ import 'react-aspect-ratio/aspect-ratio.css';
 import Router from 'next/router';
 import {useRouter} from 'next/router';
 import { NextPage } from 'next';
+import { useUser } from '@supabase/auth-helpers-react';
+
+// import Database from 'better-sqlite3';
+// const db = new Database('./pages/api/db/rooms.db');
+
+// const roomExist = db.prepare('select 1 from rooms where roomId = ?');
+// export const getServerSideProps = (req) => {
+//   const { roomId } = req.query
+
+//   if(!roomExist.run(roomId)){
+
+//     return {
+//       redirect: {
+//         destination: '/',
+//         permanent: false,
+//       },
+//     }
+//   }
+
+//   return
+
+// } 
+
+
 
 const RoomPage: NextPage = (req) => {
   const [numParticipants, setNumParticipants] = useState(0);
@@ -19,37 +43,43 @@ const RoomPage: NextPage = (req) => {
   });
 
   const router = useRouter()
-  const { roomId } = router.query
+  const user = useUser();
+
+  const { roomId, tokenQuery } = router.query
+
+
+
+  
 
   const nameRef = useRef(null);
   const [data, setData] = useState({})
 
+  const [token, setToken] = useState(tokenQuery)
 
-  const [userName, setUserName] = useState<string>()
+
+  const [userName, setUserName] = useState<string>((user) ? user?.user_metadata.full_name : undefined )
 
   
   useEffect(() => {
-    if(userName){
-    fetch('/api/room',{ method: 'post', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}, body: JSON.stringify({userName: userName, roomId: roomId})})
+    if(!user && userName){
+      fetch('/api/room',{ method: 'post', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}, body: JSON.stringify({userName: userName, roomId: roomId})})
       .then((res) => res.json())
       .then((data) => {
-        setData(data)
+        console.log(data);  
+        setToken(data.token)      
       })
     }
   }, [userName])
 
-  const getToken = () => {
-  }
 
   const onFormSubmit = (event) => {
     event.preventDefault()
     setUserName(nameRef.current.value)
 
-    getToken()
     event.target.reset();
 
-    // send state to server with e.g. `window.fetch`
   }
+
 
   if(!userName){
     return <>
@@ -64,7 +94,6 @@ const RoomPage: NextPage = (req) => {
 
 
   const url = 'wss://livekit.krejci.email';
-  let token = data.token || undefined
 
   
   const query = new URLSearchParams('http://localhost:3000/room/room?url=wss%3A%2F%2Flivekit.krejci.email&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTkyNjQyMzksImlzcyI6IkFQSXlCdG9lcE5hdHNqeSIsImp0aSI6InRvbnlfc3RhcmsiLCJuYW1lIjoiVG9ueSBTdGFyayIsIm5iZiI6MTY2MzI2NDIzOSwic3ViIjoidG9ueV9zdGFyayIsInZpZGVvIjp7InJvb20iOiJzdGFyay10b3dlciIsInJvb21Kb2luIjp0cnVlfX0.5tqBfRrUHHsdMkA5kFGQMYRAzeNkvz3f7t7oOBsdP0c&videoEnabled=1&audioEnabled=1&simulcast=1&dynacast=1&adaptiveStream=1&videoDeviceId=240092b45667532940b32497114f7a559a9652f96cdff794c3049ac286ae8e41');

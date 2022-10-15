@@ -32,23 +32,26 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if(roomId && !roomExist.get(roomId))
     res.status(400).json({error: 'did not find this room'})
     
+    let roomName
+
+    // should add user control
+    if(roomId && roomExist.run(roomId)){
+      roomName = roomId    
+    }else{
+      roomName = genRoomId()
+      addRoom.run(roomName, userName)
+    }
+
+
+    console.log(roomName);
     
 
-    const roomName = (roomExist.get(roomId)) ? roomId : genRoomId()
-    addRoom.run(roomName, userName)
+    const at = new AccessToken(process.env.LK_API_KEY, process.env.LK_API_SECRET, {identity: userName});
 
+    at.addGrant({ roomJoin: true, room: roomName });
+    const token = at.toJwt();
 
-
-
-    // const at = new AccessToken(process.env.LK_API_KEY, process.env.LK_API_SECRET, {identity: userName});
-
-    // at.addGrant({ roomJoin: true, room: roomName });
-    // const token = at.toJwt();
-
-
-
-    const token = 'test-TOKEN'
-
+    // const token = 'not'
 
     // if(token)
         res.status(200).json({roomId: roomName, token: token})
