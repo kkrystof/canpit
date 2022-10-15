@@ -4,6 +4,10 @@ import type { AppProps } from 'next/app'
 import { ThemeProvider, DefaultTheme } from 'styled-components'
 import GlobalStyle from '../components/globalstyles'
 
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { SessionContextProvider } from '@supabase/auth-helpers-react'
 
 const theme: DefaultTheme = {
   colors: {
@@ -24,14 +28,22 @@ const theme: DefaultTheme = {
   },
 }
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <>
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <Component {...pageProps} />
-    </ThemeProvider>
-  </> 
 
+function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter()
+  const [supabaseClient] = useState(() => createBrowserSupabaseClient())
+
+  return (
+    <SessionContextProvider
+      supabaseClient={supabaseClient}
+      initialSession={pageProps.initialSession}
+    >
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </SessionContextProvider>
+  )
 }
 
 export default MyApp

@@ -114,80 +114,64 @@ const ActionBtn = styled(motion.button)`
 import Link from 'next/link';
 // import { Drawer } from '@chakra-ui/react';
 // import { Button, TextField, useColorScheme } from '@mui/joy';
-import { Router, useRouter } from 'next/router';
+import router, { Router, useRouter } from 'next/router';
 import { motion } from 'framer-motion';
+import { useUser } from '@supabase/auth-helpers-react';
+import { withPageAuth } from '@supabase/auth-helpers-nextjs';
 
-// export const getServerSideProps = withPageAuth({ redirectTo: '/login' });
 
 
 
-const Login = () => {
+const App = () => {
 
   // const { isLoading, session, error, supabaseClient } = useSessionContext();
-  // const user = useUser();
-  // const [data, setData] = useState();
+  const user = useUser();
 
-  
-  // let router= useRouter()
-  
-  // async function logOut() {
-  //   const { error } = await supabaseClient.auth.signOut();
-  //   if (error) {
-  //     alert(error.message);
-  //   }
-  
-  //   router.push('/login')
-  
-  
-  // }
+  const [data, setData] = useState();
+  const [btn, setBtn] = useState(0);
 
-  
-  // useEffect(() => {
-  //   async function loadData() {
-  //     const { data } = await supabaseClient;
-  //     setData(data);
-  //   }
-  //   // Only run query once user is logged in.
-  //   if (user) loadData();
+  useEffect(() => {
+    if(btn){
+    fetch('/api/room',{ method: 'post', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}, body: JSON.stringify({userName: user?.id})})
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data)
+        console.log(data);
+        router.push({pathname: `/room/${data?.roomId}`, query: { tokenQuery: data?.token  }}, `/room/${data?.roomId}`)
+      })
+      
 
-  // }, [user]);
+    }
+  }, [btn])
 
 
 
-
-
-  // if (!user)
-  //   return (
-  //     <>
-  //       {/* {error && <p>{error.message}</p>} */}
-  //       <Link href='/login'>Login</Link>
-  //     </>
-  //   );
 
   return (
     <>
       <Layout>
         <h2>Canpit</h2>
+        {/* {JSON.stringify(user, null, 2)} */}
         <Drower>
           <Card>
             <DrawerThree>
-            <ActionBtn onClick={() => {}} whileHover={{background: 'radial-gradient(206.72% 204.88% at 180.67% -6.67%, #6F8BEC 0%, #DF5B56 30.48%, #FFA500 100%)', transition: {duration: 0.35}}} initial={{background: 'radial-gradient(206.72% 204.88% at 106.67% -6.67%, #6F8BEC 0%, #DF5B56 49.48%, #FFA500 100%)'}}>
+            <ActionBtn onClick={() => setBtn(1)} whileHover={{background: 'radial-gradient(206.72% 204.88% at 180.67% -6.67%, #6F8BEC 0%, #DF5B56 30.48%, #FFA500 100%)', transition: {duration: 0.35}}} initial={{background: 'radial-gradient(206.72% 204.88% at 106.67% -6.67%, #6F8BEC 0%, #DF5B56 49.48%, #FFA500 100%)'}}>
               <div className='inside'>
                 <img src="/img/newRoom.svg" height={60} alt="" />
                 <p>Prepare<br/>Room</p>
               </div>
             </ActionBtn>
-            <Menu></Menu>
+            <Menu>
+              <p>{user?.user_metadata.full_name}</p>
+            </Menu>
             </DrawerThree>
           </Card>
           <Card avatar>
-            <Avatar src="/img/face.png" alt="" />
+            <Avatar src={user?.user_metadata.avatar_url} alt="" />
           </Card>
         </Drower>
         {/* <Drower>
           <Card>
-          <p>Krystof Kulhanek</p>
-          <p>some content here</p>
           <Button onClick={logOut}>Sign out</Button>
           <pre>{JSON.stringify(data, null, 2)}</pre>
           </Card>
@@ -197,4 +181,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default App;
+
+export const getServerSideProps = withPageAuth({ redirectTo: '/login' })
+
