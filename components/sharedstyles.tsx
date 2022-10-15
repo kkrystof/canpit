@@ -62,10 +62,11 @@ const CodeTag = styled.code`
 `
 
 const Avatar = styled.img`
-  height: 80px;
-  width: 80px;
+  height: 120px;
+  width: 120px;
   border-radius: 100%;
   border: 1px solid ${({ theme }) => theme.colors.white[200]};
+  box-sizing: border-box;
 `
 
 const Button = styled.button`

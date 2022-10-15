@@ -10,14 +10,18 @@ import styled from 'styled-components'
 
 const Card = styled.div`
   /* position: relative; */
-  /* height: 150px; */
+  height: 100%;
 
-  // @ts-ignore
-  padding: ${(props) => props.avatar ? '2em' : '20px'};
+  padding: ${(props) => props.avatar ? '25px' : '10px'};
   width: ${(props) => props.avatar ? 'auto' : '100%'};
   background-color: ${({ theme }) => theme.colors.white[100]};
-  border: 1px solid ${({ theme }) => theme.colors.white[200]};
+  outline: 2px solid ${({ theme }) => theme.colors.white[200]};
   border-radius: 20px;
+  /* padding: 20px; */
+  /* box-sizing: border; */
+  transition: all 200ms;
+  max-height: 170px;
+
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.white[200]};
@@ -41,39 +45,67 @@ const Drower = styled.div`
   display: flex;
   gap: 1rem;
   /* border: 1px solid red; */
-  /* height: 200px; */
-`
+  `
 
 const DrawerThree = styled.div`
+/* border: 1px solid blue; */
+  position: relative;
   display: flex;
-  gap: 1rem;
+  gap: 10px;
   /* border: 1px solid red; */
-  height: 100%;
+  /* height: 100%; */
 `
 
-const ActionBtn = styled.button`
-  color: ${({ theme }) => theme.colors.black[300]};
+const Menu = styled.div`
+  position: relative;
+  width: 100%;
+  height: 150px;
+  background-color: ${({ theme }) => theme.colors.white[200]};
+  border-radius: 10px;
+`
+
+const ActionBtn = styled(motion.button)`
+  /* color: ${({ theme }) => theme.colors.white[300]}; */
+  color: white;
   font-family: inherit;
-  background-color: ${({ theme }) => theme.colors.primary};
-  width: max-content;
-  padding: 8px 12px 9px 12px;
+  /* background-color: ${({ theme }) => theme.colors.primary}; */
+  min-width: 150px;
+  max-height: 150px;
+  padding: 10px;
   font-weight: 500;
-  border-radius: 17px;
+  border-radius: 10px;
   font-size: 1rem;
   border: none;
   transition: background-color 150ms;
+  text-align: left;
+  /* background: radial-gradient(206.72% 204.88% at 106.67% -6.67%, #6F8BEC 0%, #DF5B56 49.48%, #FFA500 100%); */
+  transition: all 800ms;
+
+  .inside{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    bottom: 0;
+    align-items: flex-start;
+    gap: 10px;
+
+    p{
+      margin: 0;
+
+    }
+  }
   
-  &.max{
+  /* &.max{
     color: ${({ theme }) => theme.colors.black[300]};
     padding: 12px 16px 12px 16px;
     border-radius: 10px;
     font-size: 1.2rem;
 
-  }
+  } */
   
   &:hover,:active,:focus {
-    background-color: white;
     cursor: pointer;
+
   } 
 `
 
@@ -83,6 +115,7 @@ import Link from 'next/link';
 // import { Drawer } from '@chakra-ui/react';
 // import { Button, TextField, useColorScheme } from '@mui/joy';
 import { Router, useRouter } from 'next/router';
+import { motion } from 'framer-motion';
 
 // export const getServerSideProps = withPageAuth({ redirectTo: '/login' });
 
@@ -123,13 +156,13 @@ const Login = () => {
 
 
 
-  if (!user)
-    return (
-      <>
-        {/* {error && <p>{error.message}</p>} */}
-        <Link href='/login'>Login</Link>
-      </>
-    );
+  // if (!user)
+  //   return (
+  //     <>
+  //       {/* {error && <p>{error.message}</p>} */}
+  //       <Link href='/login'>Login</Link>
+  //     </>
+  //   );
 
   return (
     <>
@@ -138,26 +171,27 @@ const Login = () => {
         <Drower>
           <Card>
             <DrawerThree>
-            <ActionBtn>Create room</ActionBtn>
-            <TextField
-  disabled={false}
-  size="md"
-  variant="outlined"
-/>
+            <ActionBtn onClick={() => {}} whileHover={{background: 'radial-gradient(206.72% 204.88% at 180.67% -6.67%, #6F8BEC 0%, #DF5B56 30.48%, #FFA500 100%)', transition: {duration: 0.35}}} initial={{background: 'radial-gradient(206.72% 204.88% at 106.67% -6.67%, #6F8BEC 0%, #DF5B56 49.48%, #FFA500 100%)'}}>
+              <div className='inside'>
+                <img src="/img/newRoom.svg" height={60} alt="" />
+                <p>Prepare<br/>Room</p>
+              </div>
+            </ActionBtn>
+            <Menu></Menu>
             </DrawerThree>
           </Card>
           <Card avatar>
-          <Avatar src={user.user_metadata.avatar_url} alt="" />
+            <Avatar src="/img/face.png" alt="" />
           </Card>
         </Drower>
-        <Drower>
+        {/* <Drower>
           <Card>
-          <p>{user.user_metadata.full_name}</p>
+          <p>Krystof Kulhanek</p>
           <p>some content here</p>
           <Button onClick={logOut}>Sign out</Button>
           <pre>{JSON.stringify(data, null, 2)}</pre>
           </Card>
-        </Drower>
+        </Drower> */}
       </Layout>
     </>
   );
