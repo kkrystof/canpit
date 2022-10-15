@@ -110,7 +110,7 @@ const ActionBtn = styled(motion.button)`
 `
 
 
-import { useUser, useSessionContext } from '@supabase/auth-helpers-react';
+// import { useUser, useSessionContext } from '@supabase/auth-helpers-react';
 import Link from 'next/link';
 // import { Drawer } from '@chakra-ui/react';
 // import { Button, TextField, useColorScheme } from '@mui/joy';
@@ -123,34 +123,34 @@ import { motion } from 'framer-motion';
 
 const Login = () => {
 
-  const { isLoading, session, error, supabaseClient } = useSessionContext();
-  const user = useUser();
-  const [data, setData] = useState();
+  // const { isLoading, session, error, supabaseClient } = useSessionContext();
+  // const user = useUser();
+  // const [data, setData] = useState();
 
   
-  let router= useRouter()
+  // let router= useRouter()
   
-  async function logOut() {
-    const { error } = await supabaseClient.auth.signOut();
-    if (error) {
-      alert(error.message);
-    }
+  // async function logOut() {
+  //   const { error } = await supabaseClient.auth.signOut();
+  //   if (error) {
+  //     alert(error.message);
+  //   }
   
-    router.push('/login')
+  //   router.push('/login')
   
   
-  }
+  // }
 
   
-  useEffect(() => {
-    async function loadData() {
-      const { data } = await supabaseClient;
-      setData(data);
-    }
-    // Only run query once user is logged in.
-    if (user) loadData();
+  // useEffect(() => {
+  //   async function loadData() {
+  //     const { data } = await supabaseClient;
+  //     setData(data);
+  //   }
+  //   // Only run query once user is logged in.
+  //   if (user) loadData();
 
-  }, [user]);
+  // }, [user]);
 
 
 
