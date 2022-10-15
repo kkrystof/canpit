@@ -31,7 +31,7 @@ export default function Home() {
         <div style={{display: 'flex', gap: '8px', margin: '2rem'}}>
             <Input></Input>
             <Button>
-                <img src="/img/gllogol.svg" />
+                <img src="/img/glogo.svg" />
                 Sign in with Google
             </Button>
         </div>
