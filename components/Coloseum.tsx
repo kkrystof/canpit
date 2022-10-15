@@ -35,7 +35,6 @@ const ColoseumBox = styled(motion.div)`
         /* border: 2px dashed rgba(128, 128, 128, 0.137); */
         width: calc(100% - 2px * 2);
         height: calc(100% - 2px * 2);
-        /* border-radius: 50%; */
     }
 `
 
