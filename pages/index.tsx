@@ -127,8 +127,9 @@ export default function Home() {
           <h2>Canpit</h2>
 
           <div className='box'>
+          <p>Activities</p>
           <p>How it works?</p>
-          <p>Contact</p>
+          <p>Donate</p>
           <p>About</p>
           </div>
 

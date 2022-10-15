@@ -74,18 +74,29 @@ const Button = styled.button`
   background-color: ${({ theme }) => theme.colors.secondary};
   width: max-content;
   padding: 6px 10px 7px 10px;
+  /* padding: 12px 20px; */
   font-weight: 500;
   border-radius: 7px;
+  line-height: 16px;
+  letter-spacing: .2px;
   font-size: 1rem;
   border: none;
   display: flex;
-  gap: 5px;
+  gap: 10px;
   align-items: center;
+  transition: all 200ms;
 
-  &:hover,:active,:focus {
-    background-color: white;
+  img{
+        height: 1rem;
+    }
+
+  &:hover {
+    background-color: #FFFFC2;
     cursor: pointer;
   } 
+  &:active {
+
+  }
 `
 
 export { Container, Main, Title, Description, CodeTag, Avatar, Button, Playfull }

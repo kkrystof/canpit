@@ -5,17 +5,20 @@ import crypto from 'crypto'
 import randomstring from 'randomstring'
 
 
+// pages/api/user
+export async function getData(userName: string, roomId: string) {
+  const response = await fetch('/api/room',{ body: JSON.stringify({userName: userName, roomId: roomId})})
+  const jsonData = await response.json()
+  return jsonData
+}
+
+
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-    const { userName } = req.body
+    const { userName, roomId } = req.body
 
 
-    const id = randomstring.generate({
-        length: 9,
-        charset: 'abcdefghijklmnopqrstuvwxyz'
-      }).match(/.{1,3}/g)
-
-    const roomName = `${id[0]}-${id[1]}-${id[2]}`;
+    const roomName = (roomId) ? roomId : genRoomId()
 
 
     const at = new AccessToken(process.env.LK_API_KEY, process.env.LK_API_SECRET, {identity: userName});
@@ -27,4 +30,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if(token)
         res.status(200).json({roomId: roomName, token: token})
 
+  }
+
+  const genRoomId = () => {
+
+    const id = randomstring.generate({
+      length: 9,
+      charset: 'abcdefghijklmnopqrstuvwxyz'
+    }).match(/.{1,3}/g)
+
+    return `${id[0]}-${id[1]}-${id[2]}`;
   }

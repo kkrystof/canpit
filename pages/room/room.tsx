@@ -1,15 +1,19 @@
 import { faSquare, faThLarge, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Room, RoomEvent, setLogLevel, VideoPresets } from 'livekit-client';
-import { DisplayContext, DisplayOptions, LiveKitRoom } from '@livekit/react-components';
-import '@livekit/react-components/dist/index.css';
 
-import { useEffect, useRef, useState } from 'react';
+
+import { Room, RoomEvent, setLogLevel, VideoPresets } from 'livekit-client';
+import { AudioRenderer, DisplayContext, DisplayOptions, LiveKitRoom, useParticipant, useRoom, VideoRenderer } from '@livekit/react-components';
+
+
+import { useState, useRef, useEffect } from 'react';
 import 'react-aspect-ratio/aspect-ratio.css';
 // import { useNavigate, useLocation } from 'react-router-dom';
 import Router from 'next/router';
 import {useRouter} from 'next/router';
 import { NextPage } from 'next';
+import { getData } from '../api/room';
+import Coloseum from '../../components/Coloseum';
 
 const RoomPage: NextPage = (req) => {
   const [numParticipants, setNumParticipants] = useState(0);
@@ -21,19 +25,22 @@ const RoomPage: NextPage = (req) => {
   const router = useRouter()
   const { roomId } = router.query
 
-  const nameRef = useRef(null);
   const [data, setData] = useState({})
+  const [isLoading, setLoading] = useState(false)
 
+  const nameRef = useRef(null);
 
   const [userName, setUserName] = useState<string>()
 
   
   useEffect(() => {
     if(userName){
+    setLoading(true)
     fetch('/api/room',{ method: 'post', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}, body: JSON.stringify({userName: userName, roomId: roomId})})
       .then((res) => res.json())
       .then((data) => {
         setData(data)
+        setLoading(false)
       })
     }
   }, [userName])
@@ -63,18 +70,29 @@ const RoomPage: NextPage = (req) => {
   }
 
 
-  const url = 'wss://livekit.krejci.email';
   let token = data.token || undefined
+
+
 
   
   const query = new URLSearchParams('http://localhost:3000/room/room?url=wss%3A%2F%2Flivekit.krejci.email&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTkyNjQyMzksImlzcyI6IkFQSXlCdG9lcE5hdHNqeSIsImp0aSI6InRvbnlfc3RhcmsiLCJuYW1lIjoiVG9ueSBTdGFyayIsIm5iZiI6MTY2MzI2NDIzOSwic3ViIjoidG9ueV9zdGFyayIsInZpZGVvIjp7InJvb20iOiJzdGFyay10b3dlciIsInJvb21Kb2luIjp0cnVlfX0.5tqBfRrUHHsdMkA5kFGQMYRAzeNkvz3f7t7oOBsdP0c&videoEnabled=1&audioEnabled=1&simulcast=1&dynacast=1&adaptiveStream=1&videoDeviceId=240092b45667532940b32497114f7a559a9652f96cdff794c3049ac286ae8e41');
-  const recorder = query.get('recorder');
+  // const url = query.get('url');
+  // const token = query.get('token');
 
+  const url = 'wss://livekit.krejci.email';
   // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6InZmZC1ucGItaGdrIn0sImlhdCI6MTY2NTUxOTMyMCwibmJmIjoxNjY1NTE5MzIwLCJleHAiOjE2NjU1NDA5MjAsImlzcyI6IkFQSXlCdG9lcE5hdHNqeSIsInN1YiI6ImtrcnlzdG9mIiwianRpIjoia2tyeXN0b2YifQ.zUo1SRaujcBjwMI3zoJ9Lms_eqvPfa33UvBtsUMTC2Y';
+  //             eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6InZmZC1ucGItaGdrIn0sImlhdCI6MTY2NTUxOTc4MSwibmJmIjoxNjY1NTE5NzgxLCJleHAiOjE2NjU1NDEzODEsImlzcyI6IkFQSXlCdG9lcE5hdHNqeSIsInN1YiI6ImtrcnlzdG9mIiwianRpIjoia2tyeXN0b2YifQ.rh_ii87YLOp4mV-s7SqnOFFwg9xgGjBw6n5R0v-_tA0
+  const recorder = query.get('recorder');
 
   if (!url || !token) {
     return <div>url and token are required</div>;
   }
+
+
+
+
+
+
 
   const onLeave = () => {
     Router.push('/');
@@ -93,18 +111,20 @@ const RoomPage: NextPage = (req) => {
     }
   };
 
-  const updateOptions = (options: DisplayOptions) => {
-    setDisplayOptions({
-      ...displayOptions,
-      ...options,
-    });
-  };
+
+  // const updateOptions = (options: DisplayOptions) => {
+  //   setDisplayOptions({
+  //     ...displayOptions,
+  //     ...options,
+  //   });
+  // };
+
 
   return (
-    <DisplayContext.Provider value={displayOptions}>
       <div className="roomContainer">
         <div className="topBar">
-          <h2>VideoChat - {roomId}</h2>
+          <h2>LiveKit Video</h2>
+          <p>{roomId}</p>
           <div className="right">
             <div>
               <input
@@ -115,15 +135,8 @@ const RoomPage: NextPage = (req) => {
               <label htmlFor="showStats">Show Stats</label>
             </div>
             <div>
-              <button
-                className="iconButton"
-                disabled={displayOptions.stageLayout === 'grid'}
-                onClick={() => {
-                  updateOptions({ stageLayout: 'grid' });
-                }}
-              >
-                <FontAwesomeIcon height={32} icon={faThLarge} />
-              </button>
+
+
               <button
                 className="iconButton"
                 disabled={displayOptions.stageLayout === 'speaker'}
@@ -150,6 +163,7 @@ const RoomPage: NextPage = (req) => {
             room.on(RoomEvent.ParticipantDisconnected, () => onParticipantDisconnected(room));
             updateParticipantSize(room);
           }}
+          stageRenderer={Coloseum}
           roomOptions={{
             adaptiveStream: isSet(query, 'adaptiveStream'),
             dynacast: isSet(query, 'dynacast'),
@@ -163,9 +177,58 @@ const RoomPage: NextPage = (req) => {
           onLeave={onLeave}
         />
       </div>
-    </DisplayContext.Provider>
   );
 };
+
+
+
+// const Stage = () => {
+//   const { room, isConnecting, participants, audioTracks } = useRoom({
+//     adaptiveStream: true,
+//     dynacast: true,
+//   })
+
+//   return (
+//     <>
+//     <div>
+
+//       {audioTracks.map((t) => {
+//         <AudioRenderer track={t} isLocal={false} />
+//       })}
+
+//       {participants.map((p) => (
+//         <ParticipantView participant={p} />
+//       ))}
+//     </div>
+//     </>
+//   )
+// }
+
+// interface ParticipantViewProps {
+//   participant: Participant
+// }
+
+// const ParticipantView = ({ participant }: ParticipantViewProps): ReactElement | null => {
+//   // isSpeaking, connectionQuality will update when changed
+//   const { isSpeaking, connectionQuality, isLocal, cameraPublication } = useParticipant(participant)
+
+//   // user has disabled video
+//   if (cameraPublication?.isMuted ?? true) {
+//     // render placeholder view
+//     return (
+//       <></>
+//     )
+//   }
+//   // user is not subscribed to track, for if using selective subscriptions
+//   if (!cameraPublication.isSubscribed) {
+//     return null;
+//   }
+
+//   return (
+//     <VideoRenderer track={cameraPublication.track} isLocal={isLocal} />
+//   )
+// }
+
 
 async function onConnected(room: Room, query: URLSearchParams) {
   // make it easier to debug
@@ -193,4 +256,12 @@ function isSet(query: URLSearchParams, key: string): boolean {
 }
 
 
+// export async function getServerSideProps(name: string, id: string) {
+//   const jsonData = await getData(name, id)
+//   return jsonData
+// }
+
+
 export default RoomPage
+
+
