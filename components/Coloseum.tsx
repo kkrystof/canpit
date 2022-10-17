@@ -14,9 +14,11 @@ const CircleVideo = styled(motion.div)`
     translate: -50% -50%;
     background: black;
     border-radius: 50%;
-    background-image: url('img/face.png');
-    background-size: cover;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    /* background-image: url('img/face.png'); */
+    /* background-size: cover; */
+    background-color: black;
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    overflow: hidden;
 `
 
 const ColoseumBox = styled(motion.div)`
@@ -76,9 +78,9 @@ const getPositions = (width: number, sum: number) => {
 
 
     
-const Coloseum = () => {
+const Coloseum = (props: any) => {
       
-      const [people, setPeople] = useState(6)
+      const [people, setPeople] = useState(props.total)
       
       // animation control
       const controls = useAnimationControls()
@@ -97,27 +99,33 @@ const Coloseum = () => {
     useEffect(() => {
         setPositions(getPositions(width, people))
         sequence()
-    }, [people, width])
+        setPeople(props.total)
+    }, [people, width, props.total])
     
   
     return <>
-        <div style={{position: 'absolute'}}>
+        {/* <div style={{position: 'absolute'}}>
             <button onClick={()=> setPeople(people+1)}>Add</button>
             <button onClick={()=> setPeople(people-1)}>Delete</button>
-        </div>
+        </div> */}
 
         <ColoseumBox ref={componentRef}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           animate={controls}
         >
-            {
+            {!!positions && 
+            
               positions.map( (p, i) => {
-                
+                      
                       if(i+1 === people){
-                        return <CircleVideo key={i} animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.5}}} initial={{transform: p.preRotate, width: 0, height: 0}}/>
+                        return <CircleVideo key={i} animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.5}}} initial={{transform: p.preRotate, width: 0, height: 0}}>
+                                {[...props.children][i]}
+                              </CircleVideo>
                       }else{
-                        return <CircleVideo key={i}  animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.5}}} style={p.size}  whileTap={{ scale: 0.8 }}/>
+                        return <CircleVideo key={i}  animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.5}}} style={p.size}  whileTap={{ scale: 0.8 }}>
+                                {[...props.children][i]}
+                              </CircleVideo>
                       }
               }) 
             }
