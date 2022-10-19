@@ -78,10 +78,12 @@ const Button = styled.button`
   /* padding: 12px 20px; */
   font-weight: 500;
   border-radius: 7px;
-  line-height: 16px;
+  /* line-height: 16px; */
   letter-spacing: .2px;
   font-size: 1rem;
-  border: none;
+  /* border: none; */
+  border: 2px solid ${({ theme }) => theme.colors.white[100]};
+
   display: flex;
   gap: 10px;
   align-items: center;
