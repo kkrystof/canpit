@@ -11,13 +11,16 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react'
 
 const theme: DefaultTheme = {
   colors: {
-    primary: '#FFCC70',
+    primary: '#F1F200',
+    // primary: '#ff6d00',
+    // secondary: '#FFFFE0',
     secondary: '#FFFFE0',
     saturation: '#FFA500',
     black: {
       "100": 'rgba(21, 19, 14, 0.3)',
       "200": 'rgba(21, 19, 14, 0.5)',
-      "300": '#15130E'
+      "300": '#15130E',
+      "solid300" : '#312F27'
     },
     white: {
       "100": 'rgba(255, 255, 224, 0.02)',
@@ -36,6 +39,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <SessionContextProvider
       supabaseClient={supabaseClient}
+      //@ts-ignore
       initialSession={pageProps.initialSession}
     >
       <ThemeProvider theme={theme}>

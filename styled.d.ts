@@ -7,6 +7,7 @@ declare module 'styled-components' {
         '100' : string
         '200' : string
         '300' : string
+        'solid300' : string
       }
       white: {
         '100' : string
