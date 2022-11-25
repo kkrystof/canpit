@@ -1,14 +1,18 @@
 
 // import React from 'react'
-import { AudioRenderer, useParticipant, VideoRenderer } from '@livekit/react-components'
+// import { AudioRenderer, useParticipant, VideoRenderer } from '@livekit/react-components'
 import { motion, useAnimationControls } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
+import { Participant, Room, RoomEvent, setLogLevel, VideoPresets } from 'livekit-client';
+import { AudioRenderer, DisplayContext, DisplayOptions, LiveKitRoom, useParticipant, useRoom, VideoRenderer } from '@livekit/react-components';
+
+
 const CircleVideo = styled(motion.div)`
     position: absolute;
-    top: 50%;
     left: 50%;
+    top: 50%;
     width: 200px;
     height: 200px;
     translate: -50% -50%;
@@ -19,12 +23,22 @@ const CircleVideo = styled(motion.div)`
     background-color: black;
     border: 2px solid rgba(255, 255, 255, 0.12);
     overflow: hidden;
+
+    .video{
+      /* top: 50%; */
+      left: 50%;
+      position: absolute;
+      translate: -50% 0;
+
+    }
 `
 
 const ColoseumBox = styled(motion.div)`
       position: relative;
-      width: 80vh;
-      height: 80vh;
+      width: 90%;
+      height: 90%;
+      max-height: 100vh;
+      max-width: 100vh;
       margin: 0 auto;
       top: 50%;
       translate: 0% -50%;
@@ -80,7 +94,7 @@ const getPositions = (width: number, sum: number) => {
     
 const Coloseum = (props: any) => {
       
-      const [people, setPeople] = useState(props.total)
+      const [people, setPeople] = useState(5)
       
       // animation control
       const controls = useAnimationControls()
@@ -97,10 +111,12 @@ const Coloseum = (props: any) => {
     const [positions, setPositions] = useState<Array<Object>>([]) 
 
     useEffect(() => {
-        setPositions(getPositions(width, people))
+      (props.total == 1) ? setPositions(getPositions(width, 5)) : setPositions(getPositions(width, props.total));
         sequence()
-        setPeople(props.total)
-    }, [people, width, props.total])
+        // setPeople(props.total)
+        console.log('i am here');
+        
+    }, [width, props.total, people])
     
   
     return <>
@@ -118,22 +134,55 @@ const Coloseum = (props: any) => {
             
               positions.map( (p, i) => {
                       
-                      if(i+1 === people){
+                      if(i+1 === props.total){
                         return <CircleVideo key={i} animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.5}}} initial={{transform: p.preRotate, width: 0, height: 0}}>
                                 {[...props.children][i]}
+                                {/* <ParticipantView participant={props.participants[i]} r={p.size.width}></ParticipantView> */}
                               </CircleVideo>
                       }else{
                         return <CircleVideo key={i}  animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.5}}} style={p.size}  whileTap={{ scale: 0.8 }}>
                                 {[...props.children][i]}
+                                {/* <ParticipantView participant={props.participants[i]} r={p.size.width}></ParticipantView> */}
                               </CircleVideo>
                       }
               }) 
             }
+
         </ColoseumBox>
     </>
 }
 
 export default Coloseum
+
+
+
+// interface ParticipantViewProps {
+//   participant: Participant,
+//   r: string
+// }
+
+// const ParticipantView = ({ participant, r }: ParticipantViewProps): ReactElement | null => {
+//   // isSpeaking, connectionQuality will update when changed
+//   const { isSpeaking, connectionQuality, isLocal, cameraPublication } = useParticipant(participant)
+//   console.log(r);
+  
+
+//   // user has disabled video
+//   if (cameraPublication?.isMuted ?? true) {
+//     // render placeholder view
+//     return (
+//       <></>
+//     )
+//   }
+//   // user is not subscribed to track, for if using selective subscriptions
+//   if (!cameraPublication.isSubscribed) {
+//     return null;
+//   }
+
+//   return (
+//     <VideoRenderer track={cameraPublication.track} isLocal={isLocal} className="video" height={r}/>
+//   )
+// }
 
 
 
