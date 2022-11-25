@@ -46,6 +46,11 @@ const Title = styled.h1`
   }
 `
 
+const Divider = styled('hr')`
+    border: solid ${({ theme }) => theme.colors.white['200']} 1px;
+    margin: 20px 0;
+`
+
 const Description = styled.p`
   text-align: center;
   line-height: 1.5;
@@ -67,12 +72,36 @@ const Avatar = styled.img`
   border-radius: 100%;
   border: 1px solid ${({ theme }) => theme.colors.white[200]};
   box-sizing: border-box;
+  background-color: white;
+  background-clip: padding-box;
+
 `
+
+/* export const hsl = (color: string, lightness: number) => {
+  let hs: string
+
+  switch (color) {
+    case 'neutral':
+      hs = '60, 100%'
+      break
+    case 'blue':
+      hs = '224, 64%'
+      break
+    case 'pink':
+      hs = '330, 80%'
+      break
+    default:
+      break
+  }
+
+  return `hsl(${hs}, ${lightness}%)`
+} */
 
 const Button = styled.button`
   color: ${({ theme }) => theme.colors.black[300]};
   font-family: inherit;
-  background-color: ${({ theme }) => theme.colors.secondary};
+  background-color: ${({ theme }) => theme.colors.primary};
+  /* background-color: transparent; */
   width: max-content;
   padding: 6px 10px 7px 10px;
   /* padding: 12px 20px; */
@@ -81,13 +110,25 @@ const Button = styled.button`
   /* line-height: 16px; */
   letter-spacing: .2px;
   font-size: 1rem;
-  /* border: none; */
-  border: 2px solid ${({ theme }) => theme.colors.white[100]};
+  border: none;
+  /* border: 2px solid ${hsl('neutral', 85)}; */
+  /* background-clip: padding-box; */
+  /* border: 2px solid red; */
 
   display: flex;
   gap: 10px;
   align-items: center;
   transition: all 200ms;
+/* 
+  &:after{
+    content: '';
+    position: absolute;
+    display: block;
+    height: 10px;
+    width: 10px;
+    background-color: red;
+
+  } */
 
   img{
         height: 1rem;
@@ -98,7 +139,8 @@ const Button = styled.button`
     cursor: pointer;
   } 
   &:active {
-
+    /* scale: 0.95 */
+    /* padding: 4px 8px 5px 8px; */
   }
 `
 
@@ -112,6 +154,21 @@ const Input = styled.input`
     border-radius: 7px;
     outline: none;
     transition: all 200ms;
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:focus {
+        transition: background-color 600000s 0s, color 600000s 0s;
+    }
+    &[data-autocompleted] {
+        background-color: transparent !important;
+    }
+
+    /* &:-webkit-autofill,
+    &:-webkit-autofill:hover, 
+    &:-webkit-autofill:focus, 
+    &:-webkit-autofill:active{
+        -webkit-box-shadow: 0 0 0 30px white inset !important;
+    } */
     
     &:hover{
         background: ${({ theme }) => theme.colors.white[100]};     
@@ -123,4 +180,4 @@ const Input = styled.input`
     }
 `
 
-export { Container, Main, Title, Description, CodeTag, Avatar, Button, Playfull, Input }
+export { Container, Main, Title, Description, CodeTag, Avatar, Button, Playfull, Input, Divider }

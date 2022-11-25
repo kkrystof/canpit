@@ -47,6 +47,7 @@ const CTA = styled.a`
   font-size: 1rem;
   border: none;
   transition: background-color 150ms;
+  text-decoration: none;
   
   &.max{
     color: ${({ theme }) => theme.colors.black[300]};

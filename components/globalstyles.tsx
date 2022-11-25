@@ -3,7 +3,7 @@ import { createGlobalStyle } from 'styled-components'
 const GlobalStyle = createGlobalStyle`
   html,
   body {
-    color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.secondary};
     padding: 0;
     margin: 0;
     background-color: ${({theme}) => theme.colors.black[300]};
@@ -16,9 +16,14 @@ const GlobalStyle = createGlobalStyle`
     font-size: 32px;
   }
 
+  /* p, h1, h2, h3 {
+    color: 
+  } */
+
   a {
-    color: inherit;
-    text-decoration: none;
+    /* color: blue; */
+    text-decoration: underline;
+    cursor: pointer;
   }
 
   * {
