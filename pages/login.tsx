@@ -2,9 +2,13 @@ import { useUser, useSessionContext } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
-import { Button, Input } from '../components/sharedstyles';
+import { Button, Divider, Input } from '../components/sharedstyles';
 import { type } from 'os';
 import styled from 'styled-components';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { dataPacket_KindFromJSON } from 'livekit-server-sdk/dist/proto/livekit_models';
+import { GetServerSidePropsContext } from 'next';
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 
 type Form = {
@@ -13,39 +17,85 @@ type Form = {
 }
 
 const Box = styled.div`
-  outline: 2px solid ${({ theme }) => theme.colors.white[200]};
+  /* outline: 2px solid ${({ theme }) => theme.colors.white[300]}; */
+  border: 2px solid ${({ theme }) => theme.colors.white[200]};
   display: flex;
   flex-direction: column;
-  width: 400px;
+  width: 500px;
   padding: 2rem;
   position: absolute;
   top: 50%;
   left: 50%;
   translate: -50% -50%;
   border-radius: 20px;
+  background-color: ${({ theme }) => theme.colors.white[200]};
+
+  h1{
+    text-align: center;
+  }
+
+  section{
+    width: 70%;
+    margin: 1rem auto;
+  }
+
+  label{
+    margin-bottom: 4px;
+  }
 
 
 `
+interface IFormInput {
+  email: string;
+  password: string;
+}
 
-const Login = () => {
+const Login = ({room}) => {
   const router = useRouter()
   const { isLoading, session, error, supabaseClient } = useSessionContext();
 
   const user = useUser();
-  // const [form, setForm] = useState<Form>({});
-  const [mail, setMail] = useState('')
-  const [pass, setPass] = useState('')
 
-
-  async function signInWithEmail() {
+  const { register, handleSubmit, watch } = useForm<IFormInput>();
+  const onSubmit: SubmitHandler<IFormInput> = async d => {
+    
     const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email: mail,
-      password: pass,
+      email: d.email,
+      password: d.password,
     })
+    
+      if(error){
+        alert(`${error}`)
+        return
+      }
 
-    console.log(error);
+      if(room){
+        router.push(`/room/${room}`)
+        return
+      }
+      
+      router.push('/app')
+
+
+  }
+
+  const data = watch()
+
+  const resetPass = async (mail: string) => {
+    const { data, error } = await supabaseClient.auth.resetPasswordForEmail(mail)
+    console.log(data, error);
+    alert('Email for pass reset was sent to you :)')
     
   }
+
+
+//  const register = async () => {
+//   const { data: user, error } = await supabaseClient.auth.api.createUser({
+//     email: 'user@email.com',
+//     password: 'password',
+//     user_metadata: { name: 'Yoda' }
+//   })
+//  }
 
 
   	// Signup using Google
@@ -62,38 +112,39 @@ const Login = () => {
 	// }
 
 
-  if (user) {
-    router.push('/app')
-    return
-  }
-
-  if (!user)
     return (
       <>
       <Box>
         
-            <h1>Sign in/up</h1>
+            {/* <h1>Before you get inside</h1> */}
+            <h1>Before you start talking</h1>
 
-            <Button style={{margin: '2rem auto'}} onClick={() => supabaseClient.auth.signInWithOAuth({provider: 'google'})}>
+            <Button style={{margin: '1rem auto', backgroundColor: 'white'}} onClick={async () => await supabaseClient.auth.signInWithOAuth({provider: 'google', options: {redirectTo: `https://cpit.krystof.ml/red${(room) ? '?room='+room : ''}`, queryParams: {room: room}}})}>
                 <img src="/img/glogo.svg" />
                 Sign in with Google
             </Button>
 
-      <form onSubmit={() => signInWithEmail()}>
-          <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
-            <div style={{display: 'flex', flexDirection: 'column'}}>
-              <label htmlFor="">Email</label>
-              <Input value={mail} onChange={i => setMail(i.target.value)} type="email"></Input>
+            <Divider/>
+      <section>
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+              <div style={{display: 'flex', flexDirection: 'column'}}>
+                <label htmlFor="">Email</label>
+                <Input {...register("email")}type="email"/>
+              </div>
+              <div style={{display: 'flex', flexDirection: 'column'}}>
+                <label htmlFor="">Password</label>
+                <Input {...register("password")} type="password"/>
+              </div>
+              <Button type='submit'>
+                Login with email
+              </Button>
             </div>
-            <div style={{display: 'flex', flexDirection: 'column'}}>
-              <label htmlFor="">Password</label>
-              <Input value={pass} onChange={i => setPass(i.target.value)} type="password"></Input>
-            </div>
-            <Button type='submit'>
-              Login with email
-            </Button>
-          </div>
-      </form>
+        </form>
+        <p>Do you forgot your pass? - <a onClick={() => resetPass(data.email)}>Reset</a></p>
+        <Button onClick={()=>supabaseClient.auth.signUp({email: data.email, password: data.password, options: {}})}>Register</Button>
+      </section>
+
       </Box>
       </>
     )
@@ -101,3 +152,33 @@ const Login = () => {
 };
 
 export default Login;
+
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  // Create authenticated Supabase Client
+  const supabase = createServerSupabaseClient(ctx)
+  // Check if we have a session
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  
+
+  if (session)
+    return {
+      redirect: {
+        destination: '/app',
+        permanent: false,
+
+      },
+  }
+
+  console.log(ctx.query);
+  
+
+  
+  
+    return {
+      props: ctx.query, // will be passed to the page component as props
+    }
+
+}
