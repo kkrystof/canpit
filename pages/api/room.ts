@@ -61,7 +61,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 // room id generation
   const genRoomId = () => {
     
-    const id = randomstring.generate({
+    const id: any = randomstring.generate({
       length: 9,
       charset: 'abcdefghijklmnopqrstuvwxyz'
     }).match(/.{1,3}/g)

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 
-const useKeyPress = (keys, callback, node = null) => {
+const useKeyPress = (keys: any, callback: any, node = null) => {
   // implement the callback ref pattern
   const callbackRef = useRef(callback);
   useLayoutEffect(() => {
@@ -9,7 +9,7 @@ const useKeyPress = (keys, callback, node = null) => {
 
   // handle what happens on key press
   const handleKeyPress = useCallback(
-    (event) => {
+    (event: any) => {
       // check if one of the key is part of the ones we want
     //   if (keys.some((key) => event.key === key)) {
         callbackRef.current(event);
@@ -39,6 +39,7 @@ const useKeyPress = (keys, callback, node = null) => {
 const useFocus = () => {
   const htmlElRef = useRef(null)
   
+  //@ts-ignore
   const setFocus = () => {htmlElRef.current &&  htmlElRef.current.focus()}
 
   return [ htmlElRef, setFocus ] 

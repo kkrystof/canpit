@@ -7,6 +7,7 @@ import styled from 'styled-components'
 
 import { Participant, Room, RoomEvent, setLogLevel, VideoPresets } from 'livekit-client';
 import { AudioRenderer, DisplayContext, DisplayOptions, LiveKitRoom, useParticipant, useRoom, VideoRenderer } from '@livekit/react-components';
+import { type } from 'os';
 
 
 const CircleVideo = styled(motion.div)`
@@ -54,9 +55,16 @@ const ColoseumBox = styled(motion.div)`
     }
 `
 
+type PositionType = {
+  size: {
+    width: string,
+    height: string,
+  },
+  preRotate: string,
+  transform: string
+}
 
-
-const getPositions = (width: number, sum: number) => {
+const getPositions = (width: number, sum: number): Array<PositionType> => {
 
         let result = []
 
@@ -105,16 +113,18 @@ const Coloseum = (props: any) => {
           return await controls.start({scale: 1})
       }
 
-    const componentRef = useRef()
+      type View = any;
+
+    const componentRef = useRef<View>()
     const { width, height } = useContainerDimensions(componentRef)
 
-    const [positions, setPositions] = useState<Array<Object>>([]) 
+    const [positions, setPositions] = useState<Array<PositionType>>([]) 
 
     useEffect(() => {
       (props.total == 1) ? setPositions(getPositions(width, 5)) : setPositions(getPositions(width, props.total));
         sequence()
         // setPeople(props.total)
-        console.log('i am here');
+        // console.log('i am here');
         
     }, [width, props.total, people])
     
@@ -125,6 +135,7 @@ const Coloseum = (props: any) => {
             <button onClick={()=> setPeople(people-1)}>Delete</button>
         </div> */}
 
+        //@ts-ignore
         <ColoseumBox ref={componentRef}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -188,7 +199,7 @@ export default Coloseum
 
 
 // helper
-export const useContainerDimensions = myRef => {
+export const useContainerDimensions = (myRef: any) => {
     const getDimensions = () => ({
       width: myRef.current.offsetWidth,
       height: myRef.current.offsetHeight

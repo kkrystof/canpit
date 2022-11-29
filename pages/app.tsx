@@ -7,11 +7,14 @@ import { Avatar, Button } from '../components/sharedstyles';
 
 import styled from 'styled-components'
 
+type CardType = {
+  avatar?: boolean
+}
 
-const Card = styled.div`
+const Card = styled('div')<CardType>`
   /* position: relative; */
   height: 100%;
-
+  cursor: pointer;
   padding: ${(props) => props.avatar ? '25px' : '10px'};
   width: ${(props) => props.avatar ? 'auto' : '100%'};
   background-color: ${({ theme }) => theme.colors.white[100]};
@@ -62,6 +65,7 @@ const Menu = styled.div`
   height: 150px;
   background-color: ${({ theme }) => theme.colors.white[200]};
   border-radius: 10px;
+  padding: 20px;
 `
 
 const ActionBtn = styled(motion.button)`
@@ -116,19 +120,28 @@ import Link from 'next/link';
 // import { Button, TextField, useColorScheme } from '@mui/joy';
 import router, { Router, useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { useUser } from '@supabase/auth-helpers-react';
-import { withPageAuth } from '@supabase/auth-helpers-nextjs';
+import { useSessionContext, useUser } from '@supabase/auth-helpers-react';
+import { createServerSupabaseClient, withPageAuth } from '@supabase/auth-helpers-nextjs';
+import Dialog from '../components/Dialog';
+import { useFetchToken } from '../components/hooks/useFetchToken';
+import { GetServerSidePropsContext } from 'next';
 
 
 
 
 const App = () => {
 
-  // const { isLoading, session, error, supabaseClient } = useSessionContext();
+  const { isLoading, session, error, supabaseClient } = useSessionContext();
   const user = useUser();
+
+  const router= useRouter()
+
 
   const [data, setData] = useState();
   const [btn, setBtn] = useState(0);
+
+  // const [tokenData, tokenError, tokenLoading] = useFetchToken(user?.id, '')
+
 
   useEffect(() => {
     if(btn){
@@ -144,13 +157,15 @@ const App = () => {
     }
   }, [btn])
 
+  
+
 
 
 
   return (
     <>
       <Layout>
-        <h2>Canpit</h2>
+        {/* <h2>Canpit</h2> */}
         {/* {JSON.stringify(user, null, 2)} */}
         <Drower>
           <Card>
@@ -163,12 +178,15 @@ const App = () => {
             </ActionBtn>
             <Menu>
               <p>{user?.user_metadata.full_name}</p>
+              <p>{user?.email}</p>
             </Menu>
             </DrawerThree>
           </Card>
-          <Card avatar>
-            <Avatar src={user?.user_metadata.avatar_url} alt="" />
-          </Card>
+          <Dialog content={<Button onClick={async () => {await supabaseClient.auth.signOut(); router.push('/login')}}>Sign out</Button>}>
+            <Card avatar>
+              <Avatar src={(user?.user_metadata.avatar_url)? user?.user_metadata.avatar_url : '/img/emo-melt.png'} alt="" />
+            </Card>
+          </Dialog>
         </Drower>
         {/* <Drower>
           <Card>
@@ -183,5 +201,36 @@ const App = () => {
 
 export default App;
 
-export const getServerSideProps = withPageAuth({ redirectTo: '/login' })
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  // Create authenticated Supabase Client
+  const supabase = createServerSupabaseClient(ctx)
+  // Check if we have a session
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+    console.log('->', session);
+    console.log(ctx.query);
+    
+    
+    
+  
+  if (!session){
+    console.log('nenene');
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+
+      },
+    }
+  }
+
+  return {
+    props: {
+      initialSession: session,
+      user: session.user,
+    },
+  }
+}
 

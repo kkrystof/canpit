@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Participant, Room, RoomEvent, RoomOptions, setLogLevel, VideoPresets } from 'livekit-client';
 import { AudioRenderer, DisplayContext, DisplayOptions, LiveKitRoom, useParticipant, useRoom, VideoRenderer } from '@livekit/react-components';
 
@@ -11,7 +13,6 @@ import { createServerSupabaseClient, withPageAuth } from '@supabase/auth-helpers
 import { useFetchToken } from '../../components/hooks/useFetchToken';
 import { useUser } from '@supabase/auth-helpers-react';
 import styled from 'styled-components';
-
 
 // export const getServerSideProps = withPageAuth({ redirectTo: '/login' })
 
@@ -28,7 +29,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   if (!session)
     return {
       redirect: {
-        destination: `/login?room=${ctx.params.roomID}`,
+        destination: `/login?room=${ctx?.params.roomID}`,
         permanent: false,
 
       },

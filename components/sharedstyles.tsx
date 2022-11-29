@@ -111,7 +111,6 @@ const Button = styled.button`
   letter-spacing: .2px;
   font-size: 1rem;
   border: none;
-  /* border: 2px solid ${hsl('neutral', 85)}; */
   /* background-clip: padding-box; */
   /* border: 2px solid red; */
 

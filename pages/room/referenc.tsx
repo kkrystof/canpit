@@ -171,6 +171,7 @@ const RoomPage: NextPage = (req) => {
         </div>
         <LiveKitRoom
           url={url}
+          //@ts-ignore
           token={token}
           onConnected={(room) => {
             setLogLevel('debug');

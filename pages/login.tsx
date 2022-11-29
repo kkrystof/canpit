@@ -50,7 +50,7 @@ interface IFormInput {
   password: string;
 }
 
-const Login = ({room}) => {
+const Login = ({room}: any) => {
   const router = useRouter()
   const { isLoading, session, error, supabaseClient } = useSessionContext();
 

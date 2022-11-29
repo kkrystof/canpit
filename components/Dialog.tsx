@@ -27,7 +27,7 @@ enum GenderEnum {
 
   const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
-
+//@ts-ignore
 const DialogDemo = ({children, content}) => {
 
     const [open, setOpen] = React.useState(false);
@@ -59,7 +59,7 @@ const DialogDemo = ({children, content}) => {
 
         <DialogTitle>Settings</DialogTitle>
         <DialogDescription>
-          Make changes to your profile here. Click save when you're done.
+          Make changes to your profile here. Click save when you&aposre done.
         </DialogDescription>
 
         {content}
