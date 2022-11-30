@@ -4,8 +4,11 @@ import { AccessToken } from 'livekit-server-sdk';
 import crypto from 'crypto'
 import randomstring from 'randomstring'
 
-import Database from 'better-sqlite3';
-const db = new Database('./pages/api/db/rooms.db');
+// import Database from 'better-sqlite3';
+// const db = new Database('./pages/api/db/rooms.db');
+
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
+
 
 
 
@@ -18,28 +21,53 @@ export async function getData(userName: string, roomId: string) {
 
 
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const roomExist = db.prepare('select 1 from rooms where roomId = ?');
-  const addRoom = db.prepare('insert into rooms (roomId, createdBy) VALUES (?, ?)');
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+
+  // const roomExist = db.prepare('select 1 from rooms where roomId = ?');
+  // const addRoom = db.prepare('insert into rooms (roomId, createdBy) VALUES (?, ?)');
+
+  const supabaseServerClient = createServerSupabaseClient({
+    req,
+    res,
+  })
+
+  // const {
+  //   data: { user },
+  // } = await supabaseServerClient.auth.admin
 
   const { userName, roomId } = req.body
+
+  let { data, error, status } = await supabaseServerClient
+  .from('rooms')
+  .select(`room_id`)
+  .eq('room_id', roomId)
+  .single()
+
+  console.log(error);
+  
+
 
   // let roomName
 
   if(!userName)
     res.status(400).json({error: 'not userName'})
+  
     
-  if(roomId && !roomExist.get(roomId))
+  if(roomId && !data)
     res.status(400).json({error: 'did not find this room'})
     
     let roomName
 
     // should add user control
-    if(roomId && roomExist.run(roomId)){
+    if(roomId && data){
       roomName = roomId    
     }else{
       roomName = genRoomId()
-      addRoom.run(roomName, userName)
+      let { error } = await supabaseServerClient.from('rooms').upsert({room_id: roomName})
+      console.log('insert ->', error);
+      
+      //ADD to DB
+      // addRoom.run(roomName, userName)
     }
 
 
