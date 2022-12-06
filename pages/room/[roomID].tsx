@@ -1,8 +1,7 @@
 // @ts-nocheck
 
-import { Participant, Room, RoomEvent, RoomOptions, setLogLevel, VideoPresets } from 'livekit-client';
+import { Participant, DataPacket_Kind, Room, RoomEvent, RoomOptions, setLogLevel, VideoPresets, ParticipantEvent } from 'livekit-client';
 import { AudioRenderer, DisplayContext, DisplayOptions, LiveKitRoom, useParticipant, useRoom, VideoRenderer } from '@livekit/react-components';
-
 
 import { useState, useRef, useEffect, ReactElement } from 'react';
 import 'react-aspect-ratio/aspect-ratio.css';
@@ -13,8 +12,8 @@ import { createServerSupabaseClient, withPageAuth } from '@supabase/auth-helpers
 import { useFetchToken } from '../../components/hooks/useFetchToken';
 import { useUser } from '@supabase/auth-helpers-react';
 import styled from 'styled-components';
-
-// export const getServerSideProps = withPageAuth({ redirectTo: '/login' })
+import WhoAmI from '../../components/acitivies/WhoAmI';
+import { activitiesList } from '../../components/acitivies/list';
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   // Create authenticated Supabase Client
@@ -43,48 +42,96 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   }
 }
 
+const roomOptions: RoomOptions = {
+  adaptiveStream: true,
+  dynacast: true,
+}
 
 const RoomPage: NextPage = (req) => {
 
-  const router = useRouter()
-  const [data, setData] = useState({})
-  const user = useUser();
-
-  const { roomID, tokenQuery } = router.query
-
-
-const [tokenData, tokenError, tokenLoading] = useFetchToken(user?.id, roomID || '')
-
-  
-  // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6ImpnYS1nbm0tdGtvIn0sImlhdCI6MTY2NjAzNTczNywibmJmIjoxNjY2MDM1NzM3LCJleHAiOjE2NjYwNTczMzcsImlzcyI6IkFQSXlCdG9lcE5hdHNqeSIsInN1YiI6ImVjZTMzODQ1LTRiYWYtNGRlMi04YjA2LTk4MDc1NDMwMWM2NCIsImp0aSI6ImVjZTMzODQ1LTRiYWYtNGRlMi04YjA2LTk4MDc1NDMwMWM2NCJ9.HKgkAaM6eLXNvsMW7m4NScoh4-zUYUy8wdyaVS7JEtI"
   const url = 'wss://livekit.krejci.email';
+  const router = useRouter()
+  const user = useUser();
+  
+  const { roomID, tokenQuery } = router.query
+  const [tokenData, tokenError, tokenLoading] = useFetchToken(tokenQuery, user?.id, roomID || '')
+
+  const [activity, setActivity] = useState(null)
+
+  const { connect, isConnecting, room, error, participants, audioTracks } = useRoom(roomOptions);
+  const encoder = new TextEncoder()
+  const decoder = new TextDecoder()
+
+  const [actTrans, setActTrans] = useState()
 
 
-  const roomOptions: RoomOptions = {
-    adaptiveStream: true,
-    dynacast: true,
+  const sent = async () => {
+    const strData = {number: Math.floor(Math.random() * 10), text: 'Why is this happening to me, why it is not just working as it shloud be, tell me'}
+
+    const data = encoder.encode(strData);
+    // participants.map(p => console.log(p.sid))
+
+    await room.localParticipant.publishData(data, DataPacket_Kind.RELIABLE)
+    return
+
+  }
+
+  interface EventInterface {
+    type: string,
+  }
+
+  const initEvent = async (data) => {
+    const payload = encoder.encode(JSON.stringify(data))
+    await room.localParticipant.publishData(payload, DataPacket_Kind.RELIABLE)
+  }
+
+  const actQuene = async (data: Transport, participantId?: string) => {
+    // befoe sent -> added type of event
+    const payload = encoder.encode(JSON.stringify({type: 'actQuene', ...data}))
+    await room.localParticipant.publishData(payload, DataPacket_Kind.RELIABLE)
+    setActivity(activitiesList[data.props.id])
+  }
+
+  const eventHandler = (data: object) => {
+    // console.log(data);
+    if(data.type === 'actTrans'){
+      setActTrans(data)
+    }
+    if(data.type == 'actQuene'){
+
+      const cmds = {
+        'start' : () => {
+          setActivity(activitiesList[data.props.id])
+        },
+        'close' : () => {
+          setOpen(false)
+        }
+      }
+  
+      return cmds[data.cmd]()
+    }
   }
 
 
-  const { connect, isConnecting, room, error, participants, audioTracks } = useRoom(roomOptions);
-
-  room.on(RoomEvent.ParticipantConnected, () => console.log('hey welcome', room));
-
-
   const init = async () => {
-    // initiate connection to the livekit room
-    console.log('token ->', tokenData?.token);
+    // console.log('token ->', tokenData?.token);
     
     await connect(url, tokenData?.token);
     // request camera and microphone permissions and publish tracks
     await room.localParticipant.enableCameraAndMicrophone();
-    console.log(participants);
+
+    room.on(RoomEvent.DataReceived, (payload: Uint8Array) => {
+      const data = decoder.decode(payload);
+      eventHandler(JSON.parse(data))
+      return
+    })
+
+    console.log(room?.localParticipant);
     
   }
 
   useEffect(() => {
     if(!tokenLoading){
-
       init().catch(console.error)
     }
     console.log(tokenData);
@@ -92,19 +139,19 @@ const [tokenData, tokenError, tokenLoading] = useFetchToken(user?.id, roomID || 
   }, [tokenData])
 
 
-  if(tokenLoading){
-    return <p>Loading ...</p>
-  }
-
+  if(tokenLoading) return <p>Loading ...</p> 
   if (tokenData?.error) return <div>{tokenData?.error}</div>
 
-
-  // return (<p>in call</p>)
-
   return <>
-          <div style={{position: 'absolute'}}>
+          <div style={{position: 'absolute', zIndex: 999}}>
+            <button onClick={() => sent()}>SENT data</button>
             <Exit onClick={async () => {await room.disconnect();router.push('/app')}}><img src="/img/exit.svg"/>Leave it here</Exit>
             <p>{tokenData?.roomId}</p>
+            {/* <p>{DataReceived}</p> */}
+            <button onClick={() => actQuene({cmd: 'start',props: {id: 'clickClick'}})}>ClickClick</button>
+            <button onClick={() => actQuene({cmd: 'start',props: {id: 'whoAmI'}})}>Who am I</button>
+
+            {activity && activity.component(room, actTrans)}
 
           </div>
 
@@ -116,10 +163,9 @@ const [tokenData, tokenError, tokenLoading] = useFetchToken(user?.id, roomID || 
 
           <Coloseum total={participants.length}>
 
-          {participants.map((p) => (
-            <ParticipantView participant={p} />
-          ))}
-
+            {participants.map((p,i) => (
+              <ParticipantView participant={p} key={i}/>
+            ))}
 
           </Coloseum>
           </div>
@@ -135,7 +181,6 @@ export default RoomPage
 interface ParticipantViewProps {
   participant: Participant
 }
-
 const ParticipantView = ({ participant }: ParticipantViewProps): ReactElement | null => {
   // isSpeaking, connectionQuality will update when changed
   const { isSpeaking, connectionQuality, isLocal, cameraPublication } = useParticipant(participant)
@@ -156,6 +201,10 @@ const ParticipantView = ({ participant }: ParticipantViewProps): ReactElement | 
     <VideoRenderer track={cameraPublication.track} isLocal={isLocal} height={'100%'} className='video'/>
   )
 }
+
+
+
+
 
 
 
