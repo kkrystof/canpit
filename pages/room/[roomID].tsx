@@ -12,10 +12,10 @@ import { createServerSupabaseClient, withPageAuth } from '@supabase/auth-helpers
 import { useFetchToken } from '../../components/hooks/useFetchToken';
 import { useUser } from '@supabase/auth-helpers-react';
 import styled from 'styled-components';
-import WhoAmI from '../../components/acitivies/WhoAmI';
 import { activitiesList as list } from '../../components/acitivies/list';
 import { motion, useAnimationControls } from 'framer-motion';
 import { Button } from "../../components/sharedstyles";
+
 
 
 
@@ -73,10 +73,6 @@ const RoomPage: NextPage = (req) => {
     type: string,
   }
 
-  const initEvent = async (data) => {
-    const payload = encoder.encode(JSON.stringify(data))
-    await room.localParticipant.publishData(payload, DataPacket_Kind.RELIABLE)
-  }
 
   const actQuene = async (data: Transport, participantId?: string) => {
     // befoe sent -> added type of event
@@ -84,22 +80,41 @@ const RoomPage: NextPage = (req) => {
     await room.localParticipant.publishData(payload, DataPacket_Kind.RELIABLE)
   }
 
-  const actQueneStart= ({props}) => {
-    // menu off
-    click()
-    setActivity(list[props.id])    
-    console.log('activity started', props)
-  } 
-
   //event handler of actQuene
   const actQueneHandler = ({cmd, props}) => {
 
     const cmds = {
       'start' : () => actQueneStart(props),
+      'end' : () => {}, // more correct LEAVE
+      'add' : () => {},
+      'remove' : () => {}
     }
     
     return cmds[cmd]()
   }
+
+  
+  const actQueneStart= ({props}) => {
+    // menu off
+    click()
+    
+    // act()
+    setActivity(list[props.id])    
+    console.log('activity started', props)
+    console.log(participants.map(p => p.sid));
+  } 
+
+  const actQueneAdd = ({props}) => {
+    console.log('qAdd');
+    
+  }
+  
+  const actQueneRemove = ({}) => {
+    console.log('qRemove');
+    
+  }
+
+
 
 
 // event -> type of event
@@ -131,9 +146,13 @@ const RoomPage: NextPage = (req) => {
     // request camera and microphone permissions and publish tracks
     await room.localParticipant.enableCameraAndMicrophone();
 
+    console.log(room);
+    console.log(participants.sid);
+    
+
     room.on(RoomEvent.DataReceived, (payload: Uint8Array) => {
       const data = decoder.decode(payload);
-      eventHandler(JSON.parse(data))
+        eventHandler(JSON.parse(data))
       return
     })
 
@@ -148,7 +167,6 @@ const RoomPage: NextPage = (req) => {
     console.log(tokenData);
 
   }, [tokenData])
-
 
 
   // From COL
@@ -166,6 +184,11 @@ const RoomPage: NextPage = (req) => {
     setMenu(current => !current)
   }
 
+  // const act = () => {
+  //   menuAnim.start({minWidth: '50vw', right: 0})
+  //   setMenu(current => !current)
+  // }
+
   const menuAnim = useAnimationControls()
 
 
@@ -179,6 +202,7 @@ const RoomPage: NextPage = (req) => {
 
 
   return <Window>
+    
     <div style={{ position: 'absolute', zIndex: 999 }}>
       <Exit onClick={async () => {await room.disconnect();router.push('/app')}}><img src="/img/exit.svg"/>Leave it here</Exit>
 
@@ -186,9 +210,7 @@ const RoomPage: NextPage = (req) => {
 
       {activity && activity.component(room, actTrans)}
 
-      {activity && <p>running ...</p>}
-
-
+      {/* <ParticipantView participant={room?.localParticipant} /> */}
       {/* {showChat && <MessageInput show autoFocus={true}/>} */}
     </div>
 
@@ -196,20 +218,21 @@ const RoomPage: NextPage = (req) => {
     <Playground animate={menuAnim} initial={{ minWidth: '100vw' }}>
       {menu && <Overlay onClick={() => click()} />}
 
+             {audioTracks.map((t) => {
+               <AudioRenderer track={t} isLocal={false} />
+             })}
+
+
       <Coloseum total={participants.length}>
+      {/* filter(p => p.sid != room?.localParticipant.sid) */}
           {participants.map((p, i) => (
             <ParticipantView participant={p} key={i} />
           ))}
       </Coloseum>
 
-
-
       {/* <TimeLine menu={menu} /> */}
     </Playground>
 
-    <div style={{}}>
-            
-    </div>
 
     <ActivityMenu>
       <div className="content">
@@ -218,7 +241,6 @@ const RoomPage: NextPage = (req) => {
           <p>Hide</p>
           <div style={{ marginRight: 'auto' }}></div>
           <Button>Copy shareable link</Button>
-          {/* <p>pff</p> */}
         </header>
 
         <ActivityLib>
@@ -241,37 +263,7 @@ const RoomPage: NextPage = (req) => {
     </ActivityMenu>
   </Window>
 
-
-    // return <>
-    //         <div style={{position: 'absolute', zIndex: 999}}>
-    //           <button onClick={() => sent()}>SENT data</button>
-    //           <Exit onClick={async () => {await room.disconnect();router.push('/app')}}><img src="/img/exit.svg"/>Leave it here</Exit>
-    //           <p>{tokenData?.roomId}</p>
-    //           {/* <p>{DataReceived}</p> */}
-    //           <button onClick={() => actQuene({cmd: 'start',props: {id: 'clickClick'}})}>ClickClick</button>
-    //           <button onClick={() => actQuene({cmd: 'start',props: {id: 'whoAmI'}})}>Who am I</button>
-
-    //           {activity && activity.component(room, actTrans)}
-
-    //         </div>
-
-    //         <div style={{height: '100vh'}}>
-
-    //         {audioTracks.map((t) => {
-    //           <AudioRenderer track={t} isLocal={false} />
-    //         })}
-
-    //         <Coloseum total={participants.length}>
-
-    //           {participants.map((p,i) => (
-    //             <ParticipantView participant={p} key={i}/>
-    //           ))}
-
-    //         </Coloseum>
-    //         </div>
-    // </>
-    ;
-};
+}
 
 export default RoomPage
 
@@ -281,9 +273,11 @@ export default RoomPage
 interface ParticipantViewProps {
   participant: Participant
 }
+
 const ParticipantView = ({ participant }: ParticipantViewProps): ReactElement | null => {
   // isSpeaking, connectionQuality will update when changed
   const { isSpeaking, connectionQuality, isLocal, cameraPublication } = useParticipant(participant)
+  
 
   // user has disabled video
   if (cameraPublication?.isMuted ?? true) {

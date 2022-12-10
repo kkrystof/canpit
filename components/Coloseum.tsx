@@ -4,6 +4,8 @@
 import { motion, useAnimationControls } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
+import { useResizeDetector } from 'react-resize-detector';
+
 
 import { Participant, Room, RoomEvent, setLogLevel, VideoPresets } from 'livekit-client';
 import { AudioRenderer, DisplayContext, DisplayOptions, LiveKitRoom, useParticipant, useRoom, VideoRenderer } from '@livekit/react-components';
@@ -19,8 +21,7 @@ const CircleVideo = styled(motion.div)`
     translate: -50% -50%;
     background: black;
     border-radius: 50%;
-    /* background-image: url('img/face.png'); */
-    /* background-size: cover; */
+
     background-color: black;
     border: 2px solid rgba(255, 255, 255, 0.12);
     overflow: hidden;
@@ -36,23 +37,25 @@ const CircleVideo = styled(motion.div)`
 
 const ColoseumBox = styled(motion.div)`
       position: relative;
-      width: 90%;
-      height: 90%;
-      max-height: 100vh;
-      max-width: 100vh;
+      width: 80%;
+      height: 80vw;
+      max-height: 90vh;
+      max-width: 90vh;
       margin: 0 auto;
       top: 50%;
       translate: 0% -50%;
 
-      &:before {
+      /* &:before {
         content: "";
         position: absolute;
         top: 0;
         left: 0;
-        /* border: 2px dashed rgba(128, 128, 128, 0.137); */
+        border: 2px dashed rgba(128, 128, 128, 0.137);
         width: calc(100% - 2px * 2);
         height: calc(100% - 2px * 2);
-    }
+        width: 100%;
+        height: 100%;
+    } */
 `
 
 type PositionType = {
@@ -78,10 +81,10 @@ const getPositions = (width: number, sum: number): Array<PositionType> => {
           const b = width / 2
           const n = sum
 
-          const circleR = (b * Math.sin(Math.PI/n)) / (Math.sin(Math.PI/n) + 1)   
+          let circleR = (b * Math.sin(Math.PI/n)) / (Math.sin(Math.PI/n) + 1)   
 
           // gap between circles
-          // circleR -= 5;
+          circleR -= 5;
 
             result.push({
                 size: {
@@ -116,15 +119,20 @@ const Coloseum = (props: any) => {
       type View = any;
 
     const componentRef = useRef<View>()
-    const { width, height } = useContainerDimensions(componentRef)
+    // const { width, height } = useContainerDimensions(componentRef)
+
+    const { width, height, ref } = useResizeDetector();
+
+
+
 
     const [positions, setPositions] = useState<Array<PositionType>>([]) 
 
     useEffect(() => {
       (props.total == 1) ? setPositions(getPositions(width, 5)) : setPositions(getPositions(width, props.total));
-        sequence()
-        // setPeople(props.total)
-        // console.log('i am here');
+        // sequence()
+        console.log(props.total);
+        
         
     }, [width, props.total, people])
     
@@ -135,23 +143,24 @@ const Coloseum = (props: any) => {
             <button onClick={()=> setPeople(people-1)}>Delete</button>
         </div> */}
 
-        //@ts-ignore
-        <ColoseumBox ref={componentRef}
+        {/* //@ts-ignore */}
+        <ColoseumBox ref={ref}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           animate={controls}
         >
+          {/* <p style={{position: 'absolute', zIndex: 99}}>{width}</p> */}
             {!!positions && 
             
               positions.map( (p, i) => {
                       
                       if(i+1 === props.total){
-                        return <CircleVideo key={i} animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.5}}} initial={{transform: p.preRotate, width: 0, height: 0}}>
+                        return <CircleVideo key={i} animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.0}}} initial={{transform: p.preRotate, width: 0, height: 0}}>
                                 {[...props.children][i]}
                                 {/* <ParticipantView participant={props.participants[i]} r={p.size.width}></ParticipantView> */}
                               </CircleVideo>
                       }else{
-                        return <CircleVideo key={i}  animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.5}}} style={p.size}  whileTap={{ scale: 0.8 }}>
+                        return <CircleVideo key={i}  animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.0}}} style={p.size}  whileTap={{ scale: 0.8 }}>
                                 {[...props.children][i]}
                                 {/* <ParticipantView participant={props.participants[i]} r={p.size.width}></ParticipantView> */}
                               </CircleVideo>
@@ -197,31 +206,72 @@ export default Coloseum
 
 
 
+const useRefDimensions = (ref: any) => {
+  const [dimensions, setDimensions] = useState({ width: 300, height: 300 })
+  useEffect(() => {
+    if (ref.current) {
+      const { current } = ref
+      const boundingRect = current.getBoundingClientRect()
+      const { width, height } = boundingRect
+      setDimensions({ width: Math.round(width), height: Math.round(height) })
+    }
+  }, [ref])
+
+  return dimensions
+}
+
+
+export const useContainerDimensions = (myRef: any) => {
+  const getDimensions = () => ({
+    width: myRef.current.offsetWidth,
+    height: myRef.current.offsetHeight
+  })
+
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDimensions(getDimensions())
+    }
+    if (myRef.current) {
+      setDimensions(getDimensions())
+    }
+
+    addEventListener("resize", handleResize)
+
+    return () => {
+      removeEventListener("resize", handleResize)
+    }
+  }, [myRef])
+
+  return dimensions;
+};
+
 
 // helper
-export const useContainerDimensions = (myRef: any) => {
-    const getDimensions = () => ({
-      width: myRef.current.offsetWidth,
-      height: myRef.current.offsetHeight
-    })
+// export const useContainerDimensions = (myRef: any) => {
+//     const getDimensions = () => ({
+//       width: myRef.current.offsetWidth,
+//       height: myRef.current.offsetHeight
+//     })
   
-    const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+//     const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
   
-    useEffect(() => {
-      const handleResize = () => {
-        setDimensions(getDimensions())
-      }
+//     useEffect(() => {
+//       const handleResize = () => {
+//         setDimensions(getDimensions())
+//       }
   
-      if (myRef.current) {
-        setDimensions(getDimensions())
-      }
+//       if (myRef.current) {
+//         setDimensions(getDimensions())
+//       }
   
-      window.addEventListener("resize", handleResize)
+//       window.addEventListener("resize", handleResize)
   
-      return () => {
-        window.removeEventListener("resize", handleResize)
-      }
-    }, [myRef])
+//       return () => {
+//         window.removeEventListener("resize", handleResize)
+//       }
+//     }, [myRef])
   
-    return dimensions;
-  };
+//     return dimensions;
+//   };
