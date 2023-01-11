@@ -1,6 +1,6 @@
 import styled from "styled-components"
 
-
+//@ts-ignore
 const Window = ({children, layout}) => {
 
     return <WindowTemp>

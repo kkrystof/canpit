@@ -5,6 +5,8 @@
 /.pnp
 .pnp.js
 
+/development
+
 todo.md
 vision.md
 

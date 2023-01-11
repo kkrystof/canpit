@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { faSquare, faThLarge, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DataPacket_Kind, Room, RoomEvent, setLogLevel, VideoPresets } from 'livekit-client';
