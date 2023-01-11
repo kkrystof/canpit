@@ -119,7 +119,7 @@ import Link from 'next/link';
 // import { Drawer } from '@chakra-ui/react';
 // import { Button, TextField, useColorScheme } from '@mui/joy';
 import router, { Router, useRouter } from 'next/router';
-import { motion } from 'framer-motion';
+import { motion, useAnimationControls } from 'framer-motion';
 import { useSessionContext, useUser } from '@supabase/auth-helpers-react';
 import { createServerSupabaseClient, withPageAuth } from '@supabase/auth-helpers-nextjs';
 import Dialog from '../components/Dialog';
@@ -138,13 +138,28 @@ const App = () => {
 
 
   const [data, setData] = useState();
-  const [btn, setBtn] = useState(0);
+  const [btn, setBtn] = useState(false);
+
+        // animation control
+const iconAnim = useAnimationControls()
+        // animatin keyframes
+  const sequence = async () => {
+      // await iconAnim.start({scale: [1, 0.85 , 1], transition: {default: { ease: "easeInOut" }, repeat: Infinity, duration: 0.20}})
+      await iconAnim.start({scale: [1, 0.85 , 1], rotate: [0, 0, 10, -20, 10, -20, 0, 0], transition: {repeat: Infinity, repeatDelay: 0.7}})
+      // await iconAnim.start({scale: 1.02, transition: {default: { ease: "easeInOut" },duration: 0.20}})
+      // return await iconAnim.start({scale: 1})
+  }
+
+  const btnTap = async () => {
+    await iconAnim.start({scale: 0.85})
+  }
 
   // const [tokenData, tokenError, tokenLoading] = useFetchToken(user?.id, '')
 
 
   useEffect(() => {
     if(btn){
+      sequence()
     fetch('/api/room',{ method: 'post', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}, body: JSON.stringify({userName: user?.id})})
       .then((res) => res.json())
       .then((data) => {
@@ -164,15 +179,19 @@ const App = () => {
 
   return (
     <>
+    {/* <div style={{height: '100vh', width: '100vw', background: 'red'}}> */}
+
+    
+
       <Layout>
         {/* <h2>Canpit</h2> */}
         {/* {JSON.stringify(user, null, 2)} */}
         <Drower>
           <Card>
             <DrawerThree>
-            <ActionBtn onClick={() => setBtn(1)} whileHover={{background: 'radial-gradient(206.72% 204.88% at 180.67% -6.67%, #6F8BEC 0%, #DF5B56 30.48%, #FFA500 100%)', transition: {duration: 0.35}}} initial={{background: 'radial-gradient(206.72% 204.88% at 106.67% -6.67%, #6F8BEC 0%, #DF5B56 49.48%, #FFA500 100%)'}}>
+            <ActionBtn onClick={() => setBtn(true)} whileHover={{background: 'radial-gradient(206.72% 204.88% at 180.67% -6.67%, #6F8BEC 0%, #DF5B56 30.48%, #FFA500 100%)', transition: {duration: 0.35}}} initial={{background: 'radial-gradient(206.72% 204.88% at 106.67% -6.67%, #6F8BEC 0%, #DF5B56 49.48%, #FFA500 100%)'}}>
               <div className='inside'>
-                <img src="/img/newRoom.svg" height={60} alt="" />
+                <motion.img animate={iconAnim} initial={{scale: 1}} src="/img/newRoom.svg" height={60} alt="" />
                 <p>Prepare<br/>Room</p>
               </div>
             </ActionBtn>
@@ -195,6 +214,8 @@ const App = () => {
           </Card>
         </Drower> */}
       </Layout>
+      {/* </div> */}
+
     </>
   );
 };

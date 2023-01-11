@@ -7,12 +7,18 @@ import { useFocus, useKeyPress } from "../components/hooks/helpers";
 import { Button } from "../components/sharedstyles";
 
 import { motion, useAnimationControls } from 'framer-motion'
+import TimeLine from "../components/TimeLine";
+import { activitiesList as list } from "../components/acitivies/list";
 
 
 
 const Homepage: NextPage = (req) => {
+
+
     const [people, setPeople] = useState(5)
     const [showChat, setShowChat] = useState(false)
+
+    const [menu, setMenu] = useState(false)
     // const [inputRef, setInputFocus] = useFocus()
 
     useHotkeys('ctrl+m', () => {
@@ -22,28 +28,44 @@ const Homepage: NextPage = (req) => {
         
     });
 
+    const taptap = (event, info) => {
+      console.log(info.point.x, info.point.y)
+    }
+
+    const click = () => {
+      (menu) ? menuAnim.start({minWidth: '100vw'}) : menuAnim.start({minWidth: '50vw'})      
+      setMenu(current => !current)
+    }
+
+    const menuAnim = useAnimationControls()
+
+
     
 
 
     return <Window>
-        <div style={{position: 'absolute'}}>
-            {/* <button onClick={()=> setPeople(people+1)}>Add</button>
-            <button onClick={()=> setPeople(people-1)}>Delete</button> */}
+        <div style={{position: 'absolute', zIndex: 999}}>
+            <button onClick={()=> setPeople(people+1)}>Add</button>
+            <button onClick={()=> setPeople(people-1)}>Delete</button>
 
-            <Exit><img src="/img/exit.svg"/>Leave it here</Exit>
+            <button onClick={() => click()}>Menu</button>
+
+            {/* <Exit><img src="/img/exit.svg"/>Leave it here</Exit> */}
             {showChat && <MessageInput show autoFocus={true}/>}
         </div>
 
 
-    <Playground>
+    <Playground  animate={menuAnim} initial={{minWidth: '100vw'}}>
+        {menu && <Overlay onClick={() => click()}/>}
         <Coloseum total={people}>
                 <img src="/img/face.png"/>
                 <img src="/img/face.png"/>
                 <img src="/img/face.png"/>
-                <img src="/img/face.png"/>
-                <img src="/img/face.png"/>
-                <img src="/img/face.png"/>
-            </Coloseum>
+                {/* <img src="/img/face.png"/> */}
+                {/* <img src="/img/face.png"/> */}
+                {/* <img src="/img/face.png"/> */}
+          </Coloseum>
+          {/* <TimeLine menu={menu} /> */}
     </Playground>
 
     <ActivityMenu>
@@ -62,21 +84,22 @@ const Homepage: NextPage = (req) => {
           <div className="box">
 
             {
-              activities.map(a =>
-                <ActivityThnail color={a.color}>
-                  <div className="icon"></div>
-                  <h3>{a.title}</h3>
-                  {/* <p>{a.desc.substring(0, 32)}...</p> */}
+              Object.keys(list).map((a,i) =>
+                <ActivityThnail color={list[a].color} key={i}>
+                  <Icon color={list[a].color}   whileTap={{ scale: 0.7, opacity: 1, transition: {duration: 0.15}}} onTapCancel={() => taptap} whileInView={{ opacity: 1 }}/>
+                  <h3>{list[a].title}</h3>
+                  <p>{list[a].desc.substring(0, 32)}...</p>
                 </ActivityThnail>                
                 )
             }
 
-                <ActivityThnail color={myColors.orange}>
+                {/* <ActivityThnail color={myColors.orange}> */}
                   {/* <div className="icon" style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(calc(-25vw - 50%), -50%)' }}></div> */}
-                  <Icon color={myColors.orange} animate={{position: 'absolute', height: '120px', width: '120px', borderRadius: '20px', top: '50%', left: '0', transform: 'translate(calc(-25vw - 50%), -50%)', transition: {type: "tween",duration: 0.5}}}/>
-                  <h3>Test</h3>
+                  {/* <Icon color={myColors.orange} whileTap={{ scale: 0.8 }} animate={{position: 'absolute', zIndex: 3, height: '120px', width: '120px', borderRadius: '20px', top: '50%', left: '0', transform: 'translate(calc(-25vw - 50%), -50%)', transition: {type: "tween",duration: 0.5}}}/> */}
+                  {/* <Icon color={myColors.orange} whileTap={{ scale: 0.7, opacity: 1, transition: {duration: 0.15}}} onTapCancel={() => taptap} whileInView={{ opacity: 1 }}/> */}
+                  {/* <h3>Test</h3> */}
                   {/* <p>{a.desc}</p> */}
-                </ActivityThnail>   
+                {/* </ActivityThnail> */}
 
           </div>
         </section>
@@ -88,21 +111,24 @@ const Homepage: NextPage = (req) => {
 
 export default Homepage
 
-const myColors = {
-  green: '#30D158',
-  red: '#FF0000',
-  blue: '#2D31FA',
-  orange: '#FF6D00',
-  yellow: '#F1F200'
-}
 
-const activities = [
-  {title: 'Let\’s have picnic', color: myColors.green, desc: 'Are you hangry? Gess what I have bring in my basket with me?'},
-  {title: 'What did you said?', color: myColors.yellow, desc: 'Are you ready speak only in questions? You sad NO?'},
-  {title: 'Among us', color: myColors.red, desc: 'haha'},
-  {title: 'You are him!', color: myColors.blue, desc: 'I thought you are the peson!'},
-  {title: 'Box of lies ...', color: myColors.red, desc: 'Lies are my teritory. So what is in my box?'},
-]
+
+
+// const myColors = {
+//   green: '#30D158',
+//   red: '#FF0000',
+//   blue: '#4D96FF',
+//   orange: '#FF6D00',
+//   yellow: '#F1F200'
+// }
+
+// const activities = [
+//   {title: 'Let\’s have picnic', color: myColors.green, desc: 'Are you hungry? Gess what I have bring in my basket with me?'},
+//   {title: 'What did you said?', color: myColors.yellow, desc: 'Are you ready speak only in questions? You sad NO?'},
+//   {title: 'Among us', color: myColors.red, desc: 'haha'},
+//   {title: 'You are him!', color: myColors.blue, desc: 'I thought you are the peson!'},
+//   {title: 'Box of lies ...', color: myColors.red, desc: 'Lies are my teritory. So what is in my box?'},
+// ]
 
 
 enum ColorType {
@@ -110,6 +136,7 @@ enum ColorType {
   border = 15,
   title = 70,
   text = 45,
+  overlay= 60
 }
 
 
@@ -133,6 +160,16 @@ const colorShade = (color: any, type: ColorType) => {
 
 
 
+const Overlay = styled.div`
+  position: absolute;
+  width: 50vw;
+  height: 100%;
+  z-index: 2;
+  /* background-color: ${colorShade('#00000', ColorType.overlay)}; */
+  /* background-color: ${({ theme }) => theme.colors.black['300']}; */
+  background-color: #15130ed4;
+`
+
 
 
 interface Props {
@@ -141,6 +178,9 @@ interface Props {
 
 
 const ActivityLib = styled.div`
+
+      /* overflow: scroll; */
+      /* height: 50vh; */
     section{
 
     }
@@ -149,17 +189,27 @@ const ActivityLib = styled.div`
 
       display: flex;
       flex-direction: row;
+      /* gap: 10px; */
+      /* gap: auto; */
       gap: 2rem;
+
+      justify-content: space-between;
       flex-wrap: wrap;
-      flex-shrink: 3;
+      /* align-items: right; */
+
+      /* flex-shrink: 3; */
+      max-width: calc(50vw - 4em);
     
     }
 `
 
 const ActivityThnail = styled.div`
 
-      width: 220px;
-      height: 180px;
+      min-width: 220px;
+      /* max-width: 250px; */
+      flex: 3 3 30%;
+      /* width: 33%; */
+      /* height: 180px; */
       /* height: 160px; */
       border: 2px solid ${props => colorShade(props.color, ColorType.border)};
       border-radius: 24px;
@@ -215,8 +265,8 @@ const Window = styled.div`
       overflow: hidden;
 `
 
-const Playground = styled.section`
-      min-width: 50vw;
+const Playground = styled(motion.section)`
+      min-width: 100vw;
 `
 
 const ActivityMenu = styled.section`
@@ -226,6 +276,8 @@ const ActivityMenu = styled.section`
       padding: 2rem;
       background: ${({ theme }) => theme.colors.white[100]};
       position: relative;
+      height: 100vh;
+      overflow-y: scroll;
       
       .content{
         /* width: 50vw; */

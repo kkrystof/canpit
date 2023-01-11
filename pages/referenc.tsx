@@ -1,6 +1,6 @@
 import { faSquare, faThLarge, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Room, RoomEvent, setLogLevel, VideoPresets } from 'livekit-client';
+import { DataPacket_Kind, Room, RoomEvent, setLogLevel, VideoPresets } from 'livekit-client';
 import { DisplayContext, DisplayOptions, LiveKitRoom } from '@livekit/react-components';
 import '@livekit/react-components/dist/index.css';
 
@@ -11,6 +11,7 @@ import Router from 'next/router';
 import {useRouter} from 'next/router';
 import { NextPage } from 'next';
 import { useUser } from '@supabase/auth-helpers-react';
+import { useFetchToken } from '../components/hooks/useFetchToken';
 
 // import Database from 'better-sqlite3';
 // const db = new Database('./pages/api/db/rooms.db');
@@ -48,16 +49,24 @@ const RoomPage: NextPage = (req) => {
   const { roomId, tokenQuery } = router.query
 
 
+  const roomid = 'pwe-ngv-buy'
+  const [tokenData, tokenError, tokenLoading] = useFetchToken(user?.id, roomid)
+
 
   
 
   const nameRef = useRef(null);
   const [data, setData] = useState({})
 
-  const [token, setToken] = useState(tokenQuery)
+  // const [token, setToken] = useState(tokenQuery)
 
 
   const [userName, setUserName] = useState<string>((user) ? user?.user_metadata.full_name : undefined )
+
+
+  const strData = JSON.stringify({some: "data"})
+const encoder = new TextEncoder()
+const decoder = new TextDecoder()
 
   
   // useEffect(() => {
@@ -101,7 +110,7 @@ const RoomPage: NextPage = (req) => {
 
   // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6InZmZC1ucGItaGdrIn0sImlhdCI6MTY2NTUxOTMyMCwibmJmIjoxNjY1NTE5MzIwLCJleHAiOjE2NjU1NDA5MjAsImlzcyI6IkFQSXlCdG9lcE5hdHNqeSIsInN1YiI6ImtrcnlzdG9mIiwianRpIjoia2tyeXN0b2YifQ.zUo1SRaujcBjwMI3zoJ9Lms_eqvPfa33UvBtsUMTC2Y';
 
-  if (!url || !token) {
+  if (!url || !tokenData?.token) {
     return <div>url and token are required</div>;
   }
 
@@ -129,11 +138,15 @@ const RoomPage: NextPage = (req) => {
     });
   };
 
+  const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+
   return (
     <DisplayContext.Provider value={displayOptions}>
       <div className="roomContainer">
         <div className="topBar">
           <h2>VideoChat - {roomId}</h2>
+          <button onClick={() => room.localParticipant.publishData(data, DataPacket_Kind.RELIABLE)}>SENT</button>
           <div className="right">
             <div>
               <input
@@ -172,13 +185,22 @@ const RoomPage: NextPage = (req) => {
         <LiveKitRoom
           url={url}
           //@ts-ignore
-          token={token}
-          onConnected={(room) => {
+          token={tokenData.token}
+          onConnected={async (room) => {
             setLogLevel('debug');
             onConnected(room, query);
             room.on(RoomEvent.ParticipantConnected, () => updateParticipantSize(room));
             room.on(RoomEvent.ParticipantDisconnected, () => onParticipantDisconnected(room));
+            room.on(RoomEvent.DataReceived, (payload: Uint8Array) => {
+              const strData = decoder.decode(payload);
+              console.log(strData);
+              return
+            })
             updateParticipantSize(room);
+
+            await delay(5000)
+            const data = encoder.encode(strData);
+            room.localParticipant.publishData(data, DataPacket_Kind.RELIABLE)
           }}
           roomOptions={{
             adaptiveStream: isSet(query, 'adaptiveStream'),

@@ -54,7 +54,8 @@ const DialogDemo = ({children, content}) => {
     <Dialog.Portal>
       <DialogOverlay />
       <DD>
-      <DialogContent transition={{ default: { ease: "easeInOut" }, duration: 1000 }} animate={{  padding: '40px', width: '80vw', height: '500px', left: '50%', transform: 'translate(-50%, -50%)'}}>
+      {/* <DialogContent transition={{ default: { ease: "easeInOut" }, duration: 1000 }} animate={{  padding: '40px', width: '80vw', height: '500px', left: '50%', transform: 'translate(-50%, -50%)'}}> */}
+      <DialogContent>
         <div className='content'>
 
         <DialogTitle>Settings</DialogTitle>
@@ -72,6 +73,7 @@ const DialogDemo = ({children, content}) => {
           <Label htmlFor="name">Name</Label>
           <Input id="name" {...register("fullName")}  />
         </Fieldset>
+        <Divider/>
         <Fieldset>
           <Label htmlFor="username">Username</Label>
           <Input id="username" {...register("userName", { required: "Please enter your user name." })}/>
@@ -106,7 +108,7 @@ const overlayShow = keyframes({
 });
 
 const contentShow = keyframes({
-  '0%': { opacity: 0, transform: 'translate(-50%, -48%) scale(.96)' },
+  '0%': { opacity: 0, transform: 'translate(-50%, -48%) scale(.90)' },
   '100%': { opacity: 1, transform: 'translate(-50%, -50%) scale(1)' },
 });
 
@@ -142,21 +144,24 @@ const DialogContent = styled(motion.div)`
   background-color: ${({ theme }) => theme.colors.black['solid300']};
   border-radius: 20px;
   /* box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px; */
-  transform: translate(-100%, -50%);
+  /* transform: translate(-100%, -50%); */
+  transform: translate(-50%, -50%);
   position: fixed;
   top: 50%;
-  left: calc(50% + 400px);
-  /* width: 80vw;
-  height: 500px; */
-  width: 170px;
-  height: 170px;
+  /* left: calc(50% + 400px); */
+  left: 50%;
+  width: 80vw;
+  height: 500px;
+  /* width: 170px; */
+  /* height: 170px; */
   max-width: 800px;
   max-height: 85vh;
-  padding: 0px;
-  /* animation: ${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1); */
+  /* padding: 0px; */
+  padding: 40px;
+  animation: ${contentShow} 250ms cubic-bezier(0.16, 1, 0.3, 1);
 
   .content{
-    display: none
+    /* display: none */
   }
 
   &:focus:{

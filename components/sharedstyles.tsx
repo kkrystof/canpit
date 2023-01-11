@@ -97,6 +97,19 @@ const Avatar = styled.img`
   return `hsl(${hs}, ${lightness}%)`
 } */
 
+const addSaturation = (color: any, amount: number) => {
+  var color = color.replace('#', '').split('');
+  var letters = '0123456789ABCDEF'.split('');
+  for(var i = 0; i < color.length; i++){
+      var newSaturation = 0;
+      if(letters.indexOf(color[i]) + amount > 15) newSaturation = 15;
+      else if(letters.indexOf(color[i]) + amount < 0) newSaturation = 0;
+      else newSaturation = letters.indexOf(color[i]) + amount;
+      color[i] = letters[newSaturation];
+  }
+  return "#" + color.join('');
+}
+
 const Button = styled.button`
   color: ${({ theme }) => theme.colors.black[300]};
   font-family: inherit;
@@ -134,7 +147,7 @@ const Button = styled.button`
     }
 
   &:hover {
-    background-color: #FFFFC2;
+    background-color: ${({theme}) => addSaturation(theme.colors.primary, 2)};
     cursor: pointer;
   } 
   &:active {

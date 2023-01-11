@@ -1,4 +1,4 @@
-
+//@ts-nocheck
 // import React from 'react'
 // import { AudioRenderer, useParticipant, VideoRenderer } from '@livekit/react-components'
 import { motion, useAnimationControls } from 'framer-motion'
@@ -19,10 +19,10 @@ const CircleVideo = styled(motion.div)`
     width: 200px;
     height: 200px;
     translate: -50% -50%;
-    background: black;
+    /* background: black; */
     border-radius: 50%;
 
-    background-color: black;
+    /* background-color: black; */
     border: 2px solid rgba(255, 255, 255, 0.12);
     overflow: hidden;
 
@@ -132,6 +132,7 @@ const Coloseum = (props: any) => {
       (props.total == 1) ? setPositions(getPositions(width, 5)) : setPositions(getPositions(width, props.total));
         // sequence()
         console.log(props.total);
+        sequence()
         
         
     }, [width, props.total, people])
@@ -155,12 +156,12 @@ const Coloseum = (props: any) => {
               positions.map( (p, i) => {
                       
                       if(i+1 === props.total){
-                        return <CircleVideo key={i} animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.0}}} initial={{transform: p.preRotate, width: 0, height: 0}}>
+                        return <CircleVideo key={i} animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.3}}} initial={{transform: p.preRotate, width: 0, height: 0}}>
                                 {[...props.children][i]}
                                 {/* <ParticipantView participant={props.participants[i]} r={p.size.width}></ParticipantView> */}
                               </CircleVideo>
                       }else{
-                        return <CircleVideo key={i}  animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.0}}} style={p.size}  whileTap={{ scale: 0.8 }}>
+                        return <CircleVideo key={i}  animate={{...p.size, transform: p.transform, transition: {type: "tween",duration: 0.3}}} style={p.size}  whileTap={{ scale: 0.8 }}>
                                 {[...props.children][i]}
                                 {/* <ParticipantView participant={props.participants[i]} r={p.size.width}></ParticipantView> */}
                               </CircleVideo>

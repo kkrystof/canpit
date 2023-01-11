@@ -11,7 +11,7 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react'
 
 const theme: DefaultTheme = {
   colors: {
-    primary: '#F1F200',
+    primary: '#F48B1D',
     // primary: '#ff6d00',
     // secondary: '#FFFFE0',
     secondary: '#FFFFE0',

@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import {
+  Button,
   Container,
   Title
 } from '../components/sharedstyles'
@@ -23,11 +24,21 @@ const Header = styled.header`
     min-width: 700px;
 
   .box{
-    margin-left: auto;
+    margin: 0 auto;
     display: flex;
     flex-direction: row;
     gap: 1.5rem;
     width: max-content;
+
+    a{
+      text-decoration: none;
+      padding: 1rem 0;
+      
+      &:hover{
+        color: white;
+      }
+    }
+
   }
 `
 
@@ -39,7 +50,7 @@ const LayoutWidth = styled.div`
 const CTA = styled.a`
   color: ${({ theme }) => theme.colors.black[300]};
   font-family: inherit;
-  background-color: ${({ theme }) => theme.colors.secondary};
+  background-color: ${({ theme }) => theme.colors.primary};
   width: max-content;
   padding: 8px 12px 9px 12px;
   font-weight: 500;
@@ -57,10 +68,23 @@ const CTA = styled.a`
   }
   
   &:hover,:active,:focus {
-    background-color: white;
+    background-color: ${({theme}) => addSaturation(theme.colors.primary, 2)};
     cursor: pointer;
   } 
 `
+
+const addSaturation = (color: any, amount: number) => {
+  var color = color.replace('#', '').split('');
+  var letters = '0123456789ABCDEF'.split('');
+  for(var i = 0; i < color.length; i++){
+      var newSaturation = 0;
+      if(letters.indexOf(color[i]) + amount > 15) newSaturation = 15;
+      else if(letters.indexOf(color[i]) + amount < 0) newSaturation = 0;
+      else newSaturation = letters.indexOf(color[i]) + amount;
+      color[i] = letters[newSaturation];
+  }
+  return "#" + color.join('');
+}
 
 // const Wave = styled.p`
 //   width: 100%;
@@ -128,17 +152,17 @@ export default function Home() {
           <h2>Canpit</h2>
 
           <div className='box'>
-          <p>Activities</p>
-          <p>How it works?</p>
-          <p>Donate</p>
-          <p>About</p>
+          <Link href={'/'}>Activities</Link>
+          <Link href={'/'}>How it works?</Link>
+          <Link href={'/'}>Donate</Link>
+          <Link href={'/'}>About</Link>
           </div>
 
-          <div className='box'>
+          {/* <div className='box'> */}
             <Link href='/app'>
             <CTA>Jump into conversation</CTA>
             </Link>
-          </div>
+          {/* </div> */}
         </Header>
 
           <div>

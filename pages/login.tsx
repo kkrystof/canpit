@@ -30,6 +30,8 @@ const Box = styled.div`
   border-radius: 20px;
   background-color: ${({ theme }) => theme.colors.white[200]};
 
+  
+
   h1{
     text-align: center;
   }
@@ -117,9 +119,10 @@ const Login = ({room}: any) => {
       <Box>
         
             {/* <h1>Before you get inside</h1> */}
-            <h1>Before you start talking</h1>
+            <h1 style={{color: '#F48B1D'}}>Before you start talking.</h1>
+            {/* <h1 style={{color: '#6F8BEC'}}>Before you start talking.</h1> */}
 
-            <Button style={{margin: '1rem auto', backgroundColor: 'white'}} onClick={async () => await supabaseClient.auth.signInWithOAuth({provider: 'google', options: {redirectTo: `https://cpit.krystof.ml/red${(room) ? '?room='+room : ''}`, queryParams: {room: room}}})}>
+            <Button style={{margin: '1rem auto', backgroundColor: 'white'}} onClick={async () => await supabaseClient.auth.signInWithOAuth({provider: 'google', options: {redirectTo: `http://localhost:3000/red${(room) ? '?room='+room : ''}`, queryParams: {room: room}}})}>
                 <img src="/img/glogo.svg" />
                 Sign in with Google
             </Button>
@@ -136,13 +139,17 @@ const Login = ({room}: any) => {
                 <label htmlFor="">Password</label>
                 <Input {...register("password")} type="password"/>
               </div>
-              <Button type='submit'>
-                Login with email
-              </Button>
+              <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px'}}>
+                <Button type='submit'>
+                  Login with email
+                </Button>
+                <p>/</p>
+                <a onClick={()=>supabaseClient.auth.signUp({email: data.email, password: data.password, options: {}})}>Register</a>
+              </div>
+
             </div>
         </form>
-        <p>Do you forgot your pass? - <a onClick={() => resetPass(data.email)}>Reset</a></p>
-        <Button onClick={()=>supabaseClient.auth.signUp({email: data.email, password: data.password, options: {}})}>Register</Button>
+        <p>Did you forget your pass? - <a onClick={() => resetPass(data.email)}>Reset</a></p>
       </section>
 
       </Box>
