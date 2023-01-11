@@ -83,7 +83,7 @@ channel.subscribe((status) => {
     // console.log('po spusteni letgo', [prevPlayer]);
     
     setStrikes(strikes)
-    setStriked(strikes.delete(prevPlayer))
+    setStriked([...striked.filter(p => p !== prevPlayer)])
 
     // (index === 0) ? setVideo([videoGet([player])[0], ...video[1]]) : setVideo([...video[0], videoGet([player])[0]])
     // asi lepsi zpusob ^^
@@ -105,7 +105,7 @@ channel.subscribe((status) => {
       channel.unsubscribe()
       videoLetgo(twoPlayers)
     }
-  })
+  },[])
 
 
   const [video, setVideo] = useState([])
@@ -141,7 +141,7 @@ channel.subscribe((status) => {
           {video[0]}
         </CircleVideo>
     </Player>
-      <img src="https://www.freepnglogos.com/uploads/vs-png/vintage-vs-with-black-lines-png-transparent-Images-12.png" width={250} style={{margin: '0 auto'}} alt="" />
+      <img src="/img/vs.png" width={250} style={{margin: '0 auto'}} alt="" />
       <Player whileTap={{x: [0, 5, -5, 0]}} transition={{type: 'spring', duration: 0.2}}>
       {/* <p>{twoPlayers[1]} - {strikes[twoPlayers[1]]}❌</p> */}
         <CircleVideo onClick={() => sendStrike(twoPlayers[1])}>
@@ -154,7 +154,7 @@ channel.subscribe((status) => {
 
     <div>
       <h1>Speak with questions ONLY!</h1>
-      <p style={{width: '100%'}}>If any of players do otherway STRIKE him that you CLICK on his BUBBLE. If most of the players do the same player is eleminated and next one take his place.</p>
+      <p style={{width: '100%'}}>If any of players do otherway - KICK out him as you CLICK on his BUBBLE. If most of the players do the same player is eleminated and next one take his place.</p>
       <button onClick={iAmReady}>I am ready</button>
     </div>
 
