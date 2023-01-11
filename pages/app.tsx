@@ -125,6 +125,7 @@ import { createServerSupabaseClient, withPageAuth } from '@supabase/auth-helpers
 import Dialog from '../components/Dialog';
 import { useFetchToken } from '../components/hooks/useFetchToken';
 import { GetServerSidePropsContext } from 'next';
+import { FiLogOut } from 'react-icons/fi';
 
 
 
@@ -201,7 +202,7 @@ const iconAnim = useAnimationControls()
             </Menu>
             </DrawerThree>
           </Card>
-          <Dialog content={<Button onClick={async () => {await supabaseClient.auth.signOut(); router.push('/login')}}>Sign out</Button>}>
+          <Dialog content={<Button onClick={async () => {await supabaseClient.auth.signOut(); router.push('/login')}}>Sign out <FiLogOut/></Button>}>
             <Card avatar>
               <Avatar src={(user?.user_metadata.avatar_url)? user?.user_metadata.avatar_url : '/img/emo-melt.png'} alt="" />
             </Card>
