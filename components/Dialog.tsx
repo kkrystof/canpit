@@ -59,25 +59,31 @@ const DialogDemo = ({children, content}) => {
         <div className='content'>
 
         <DialogTitle>Settings</DialogTitle>
-        <DialogDescription>
+        {/* <DialogDescription>
           Make changes to your profile here. Click save when you&aposre done.
-        </DialogDescription>
-
-        {content}
+        </DialogDescription> */}
 
         <Divider/>
 
         <form onSubmit={handleSubmit(onSubmit)}>
 
-        <Fieldset>
+<Flex style={{flexDirection: 'row', gap: '0.3rem'}}>
+<Flex style={{flexDirection: 'column', gap: '0.7rem'}}>
+
           <Label htmlFor="name">Name</Label>
+          <Label htmlFor="username">Username</Label>
+</Flex>
+<Flex style={{flexDirection: 'column', gap: '0.7rem'}}>
+
+        <Fieldset>
           <Input id="name" {...register("fullName")}  />
         </Fieldset>
-        <Divider/>
+        {/* <Divider/> */}
         <Fieldset>
-          <Label htmlFor="username">Username</Label>
           <Input id="username" {...register("userName", { required: "Please enter your user name." })}/>
         </Fieldset>
+</Flex>
+</Flex>
 
 
 
@@ -90,6 +96,9 @@ const DialogDemo = ({children, content}) => {
           {/* </Dialog.Close> */}
         </Flex>
         </form>
+
+        {content}
+
 
 
         </div>
@@ -253,6 +262,7 @@ const Label = styled('label')`
   color: violet.violet11;
   width: 90;
   text-align: right;
+  padding: 8px 12px 9px 12px;
 `;
 
 // const Input = styled('input')`
