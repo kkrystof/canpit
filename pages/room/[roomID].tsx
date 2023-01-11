@@ -17,7 +17,8 @@ import { motion, useAnimationControls } from 'framer-motion';
 import { Button } from "../../components/sharedstyles";
 import { type } from 'os';
 
-import { FiGrid, FiChevronsRight } from "react-icons/fi";
+import { FiGrid, FiChevronsRight, FiXOctagon, FiCamera, FiCameraOff, FiMic, FiMicOff } from "react-icons/fi";
+
 
 // pokud neni uzivatel prihlasen -> login page a presmerovani zpet do room
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
@@ -243,17 +244,31 @@ const RoomPage: NextPage = (req) => {
 
   //-------------------
 
+  const [inputs, setInputs] = useState({mic: true, cam: true})
+
+  const enableCam = () => {
+    room?.localParticipant.setCameraEnabled(room?.localParticipant.isCameraEnabled ? false : true)
+    setInputs({...inputs, cam: !inputs.cam})
+  }
+
+  const enableMic = () => {
+    room?.localParticipant.setMicrophoneEnabled(room?.localParticipant.isMicrophoneEnabled ? false : true)
+    setInputs({...inputs, mic: !inputs.mic})
+  }
+
 
   if (tokenLoading) return <p>Loading ...</p>
   if (tokenData?.error) return <div>{tokenData?.error}</div>
 
   return <Window layout={layout}>
     
-    <div style={{ position: 'fixed', zIndex: 999, top: 0, left: 0 }}>
+    <div style={{ position: 'fixed', display: 'flex', zIndex: 999, top: 0, left: 0 }}>
       <Exit onClick={async () => {await room.disconnect();router.push('/app')}}><img src="/img/exit.svg"/>Leave it here</Exit>
+     {activity && <Exit onClick={() => {broadcast('queneEvent', {cmd: 'end'}); queneEnd()}} style={{color: 'gray'}}>Stop activity <FiXOctagon/></Exit>}
 
-      <button onClick={() => {broadcast('queneEvent', {cmd: 'end'}); queneEnd()}}>Stop activity</button>
-
+     <Exit onClick={() => enableCam()} style={{color: 'gray'}}>{inputs.cam ? <FiCamera/> : <FiCameraOff/>}</Exit>
+     <Exit onClick={() => enableMic()} style={{color: 'gray', marginLeft: '0.3rem'}}>{inputs.mic ? <FiMic/> : <FiMicOff/>}</Exit>
+     {/* <p onClick={() => console.log(room.localParticipant.isCameraEnabled)}>{room.localParticipant.isCameraEnabled}ppp</p> */}
       {/* <ol>
         {participants.map((p,i) => <li key={i}>{p.sid}</li>)}
       </ol>
@@ -392,7 +407,12 @@ interface ParticipantViewProps {
   if (cameraPublication?.isMuted ?? true) {
     // render placeholder view
     return (
-      <><p>img of face</p></>
+      <FiCameraOff style={{position: 'absolute',
+      left: '50%',
+      translate: '-50% -50%',
+      top: '50%',
+      width: '30%',
+      height: '30%'}}/>
     )
   }
   // user is not subscribed to track, for if using selective subscriptions
@@ -439,7 +459,7 @@ const Exit = styled.button`
   gap: 10px;
   align-items: center;
   transition: all 200ms;
-  margin: 20px;
+  margin: 20px 0 20px 20px;
   color: rgba(38, 148, 99, 0.5);
 
   img{
@@ -460,6 +480,8 @@ const MenuBtn = styled.div`
   font-family: inherit;
   /* background-color: ${({ theme }) => theme.colors.secondary}; */
   background-color: transparent;
+  position: absolute;
+  height: calc(100% - 40px);
   width: max-content;
   padding: 6px 10px 7px 10px;
   /* padding: 12px 20px; */
@@ -477,6 +499,7 @@ const MenuBtn = styled.div`
   transition: all 200ms;
   margin: 20px;
   padding: 40px;
+  color: gray;
 
   div{
         height: 24px;
