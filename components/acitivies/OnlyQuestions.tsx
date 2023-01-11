@@ -82,8 +82,11 @@ channel.subscribe((status) => {
     // videoLetgo([prevPlayer]);
     // console.log('po spusteni letgo', [prevPlayer]);
     
-    setStrikes(strikes)
-    setStriked([...striked.filter(p => p !== prevPlayer)])
+    // setStrikes(strikes)
+    // let s = striked
+    // s[index] = false
+    // setStriked(s)
+    // setStriked([...striked.filter(p => p !== prevPlayer)])
 
     // (index === 0) ? setVideo([videoGet([player])[0], ...video[1]]) : setVideo([...video[0], videoGet([player])[0]])
     // asi lepsi zpusob ^^
@@ -112,13 +115,14 @@ channel.subscribe((status) => {
   const [twoPlayers, setTwoPlayers] = useState(false)
   const [strikes, setStrikes] = useState({})
 
-  const [striked, setStriked] = useState([])
+  const [striked, setStriked] = useState([false, false])
 
   const sendStrike = (id: string) => {
-    if(!striked.includes(id)){
+    // if(!striked.includes(id)){
+      console.log('strike send');
       send({cmd: 'strike', props: {id: id}})
-      setStriked([...striked, id])
-    }
+      // setStriked([...striked, id])
+    // }
   }
 
   const iAmReady = event => {
@@ -130,21 +134,41 @@ channel.subscribe((status) => {
 
   return <>
   <Layout>
+    {/* <p>{}</p> */}
 
-    {/* <p>{JSON.stringify(twoPlayers)}</p> */}
+    {/* <p>{JSON.stringify(striked)}</p> */}
 
 {(twoPlayers) ?
     <Arena>
     <Player whileTap={{x: [0, 5, -5, 0]}} transition={{type: 'spring', duration: 0.2}}>
         {/* <p>{twoPlayers[0]} - {strikes[twoPlayers[0]]}❌</p> */}
-        <CircleVideo onClick={() => sendStrike(twoPlayers[0])}>
+        <CircleVideo onClick={() => {
+          send({cmd: 'strike', props: {id: twoPlayers[0]}});
+          // if(!striked[0]){
+          //   let s = striked
+          //   s[0] = true
+          //   setStriked(s)
+          //   // setStriked([...striked, twoPlayers[0]])
+          // }
+        }}>
           {video[0]}
         </CircleVideo>
     </Player>
       <img src="/img/vs.png" width={250} style={{margin: '0 auto'}} alt="" />
       <Player whileTap={{x: [0, 5, -5, 0]}} transition={{type: 'spring', duration: 0.2}}>
       {/* <p>{twoPlayers[1]} - {strikes[twoPlayers[1]]}❌</p> */}
-        <CircleVideo onClick={() => sendStrike(twoPlayers[1])}>
+        <CircleVideo onClick={() => {
+          send({cmd: 'strike', props: {id: twoPlayers[1]}});
+          // if(!striked[1]){
+          //    let s = striked
+          //    s[1] = true
+          //    setStriked(s)
+          //   //  setStriked([...striked, twoPlayers[1]])
+          // }else{
+          //   console.log('nic');
+            
+          // }
+        }}>
           {video[1]}
         </CircleVideo>
       </Player>
