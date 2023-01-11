@@ -122,7 +122,7 @@ const Login = ({room}: any) => {
             <h1 style={{color: '#F48B1D'}}>Before you start talking.</h1>
             {/* <h1 style={{color: '#6F8BEC'}}>Before you start talking.</h1> */}
 
-            <Button style={{margin: '1rem auto', backgroundColor: 'white'}} onClick={async () => await supabaseClient.auth.signInWithOAuth({provider: 'google', options: {redirectTo: `http://localhost:3000/red${(room) ? '?room='+room : ''}`, queryParams: {room: room}}})}>
+            <Button style={{margin: '1rem auto', backgroundColor: 'white'}} onClick={async () => await supabaseClient.auth.signInWithOAuth({provider: 'google', options: {redirectTo: `http://canpit.vercel.com/red${(room) ? '?room='+room : ''}`, queryParams: {room: room}}})}>
                 <img src="/img/glogo.svg" />
                 Sign in with Google
             </Button>
