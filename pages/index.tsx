@@ -165,14 +165,14 @@ export default function Home() {
           {/* </div> */}
         </Header>
 
-          <div>
+          {/* <div> */}
             {/* <Title>Place for <Playfull>playfull</Playfull> conversations</Title> */}
             <Title>
-                <img src="/img/homeTitle.svg" height={70}/>
+                <img src="/img/homeTitle.svg" style={{width: '100%'}}/>
             </Title>
             {/* <CTA className='max'>Setup my room</CTA> */}
             {/* Place for playfull conversations that you forget time */}
-          </div>
+          {/* </div> */}
       </LayoutWidth>
     </Container>
 

@@ -27,13 +27,15 @@ const Title = styled.h1`
   position: relative;
   line-height: 1.15;
   /* max-width: 60vw; */
-  max-width: max-content;
+  /* max-width: max-content; */
+  width: 100%
   font-size: 4rem;
   color: ${({ theme }) => theme.colors.secondary};
   /* color: rgb(185, 21, 21); */
   /* text-align: center; */
   text-decoration: none;
   z-index: 2;
+  padding: 1rem;
 
   a {
     color: ${({ theme }) => theme.colors.secondary};
