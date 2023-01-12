@@ -44,7 +44,7 @@ export const activitiesList:Object = {
     // },
     onlyQuestions: { 
         id: 'onlyQuestions',
-        title: 'What did you said?',
+        title: 'Was that question?',
         color: myColors.yellow,
         layout: 1,
         component: (init: any, videoGet: any, videoLetgo: any) => <OnlyQuestions init={init} videoGet={videoGet} videoLetgo={videoLetgo}/>,
@@ -60,11 +60,11 @@ export const activitiesList:Object = {
     },
     clickClick: { 
         id: 'clickClick',
-        title: 'Just click on button',
+        title: 'Box of Lies',
         color: myColors.orange,
         layout: 1,
         component: (room:any, actTrans: any, videos: any) => <ClickClick room={room} trans={actTrans} videos={videos}/>,
-        desc: 'Just butt button'
+        desc: 'Mistery box of unexpected insides'
     },
     // boxOfLies: { 
     //     id: 'boxOfLies',

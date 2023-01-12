@@ -178,7 +178,7 @@ channel.subscribe((status) => {
 
     <div>
       <h1>Speak with questions ONLY!</h1>
-      <p style={{width: '100%'}}>If any of players do otherway - KICK out him as you CLICK on his BUBBLE. If most of the players do the same player is eleminated and next one take his place.</p>
+      <p style={{width: '100%'}}>If any of the players do otherwise - KICK him out as you CLICK on his BUBBLE. If most of the players do the same player is eliminated and the next one takes his place.</p>
       <button onClick={iAmReady}>I am ready</button>
     </div>
 

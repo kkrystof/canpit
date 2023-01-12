@@ -338,7 +338,7 @@ const RoomPage: NextPage = (req) => {
           <p>Settings</p>
           <div style={{ marginRight: 'auto' }}></div>
           {/* <Button>Copy shareable link</Button> */}
-          <Exit onClick={() => {navigator.clipboard.writeText(`https://canpit.com/room/${roomID}`)}} style={{color: 'gray', margin: 0}}>Copy shareable link</Exit>
+          <Exit onClick={() => {navigator.clipboard.writeText(`https://canpit.krystof.ml/room/${roomID}`)}} style={{color: 'gray', margin: 0}}>Copy shareable link</Exit>
         </header>
 
         <ActivityLib>
