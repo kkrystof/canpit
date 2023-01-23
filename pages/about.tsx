@@ -2,12 +2,12 @@ import Head from 'next/head'
 import {
   Button,
   Container,
-  Title
 } from '../components/sharedstyles'
 
 import styled, { ThemeConsumer } from 'styled-components'
 import Link from 'next/link'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 
 const Header = styled.header`
@@ -49,32 +49,7 @@ const LayoutWidth = styled.div`
     min-width: 700px;
 `
 
-const CTA = styled.a`
-  color: ${({ theme }) => theme.colors.black[300]};
-  font-family: inherit;
-  /* background-color: ${({ theme }) => theme.colors.primary}; */
-  background-color: white;
-  width: max-content;
-  padding: 8px 12px 9px 12px;
-  font-weight: 500;
-  border-radius: 7px;
-  font-size: 1rem;
-  border: none;
-  transition: background-color 150ms;
-  text-decoration: none;
-  
-  &.max{
-    color: ${({ theme }) => theme.colors.black[300]};
-    padding: 12px 16px 12px 16px;
-    border-radius: 10px;
-    font-size: 1.2rem;
-  }
-  
-  &:hover,:active,:focus {
-    background-color: ${({theme}) => addSaturation(theme.colors.primary, 2)};
-    cursor: pointer;
-  } 
-`
+
 
 const addSaturation = (color: any, amount: number) => {
   var color = color.replace('#', '').split('');
@@ -129,12 +104,10 @@ const addSaturation = (color: any, amount: number) => {
 // `
 
 const TopBar = styled.div`
-  width: 100vw;
+  width: 100%;
   position: relative;
   /* background: ${({ theme }) => theme.colors.white[400]}; */
   background: ${({theme}) => theme.colors.primary};
-  /* background: white; */
-
   `
 
 const About = styled.div`
@@ -149,13 +122,10 @@ const About = styled.div`
   /* justify-content: center; */
     align-items: center;
   /* flex-direction: column; */
-  /* padding: 2rem 2rem 2rem 2rem; */
-  padding: 0.7rem 1.5rem;
-  margin: 1.5rem 0;
+  padding: 2rem 2rem 4rem 2rem;
 
   .title{
     margin-right: auto;
-    font-size: 1.3rem;
   }
 
   a,h1,h2{
@@ -167,6 +137,57 @@ const About = styled.div`
     background: ${({ theme }) => theme.colors.white[200]};
   }
   
+`
+
+const Content = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  color: ${({ theme }) => theme.colors.white[500]};
+  line-height: 1.4;
+
+  h2{
+    color: ${({ theme }) => theme.colors.white[600]};
+    margin: 0;
+    font-weight: 500;
+  }
+
+  li {counter-increment: li}
+
+  
+  li::before {content: counter(li)" · "; color: ${({ theme }) => theme.colors.white[600]};
+  display: inline-block; width: 1.3em;
+  margin-left: -1em}
+
+ol{
+  list-style: none;
+  counter-reset: (li);
+  margin: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+}
+
+img{
+  border-radius: 20px;
+}
+
+
+  p{
+    margin: 0.5rem 0 0.5rem 0;
+  }
+
+`
+
+const Title = styled.div`
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+
+      p,a{
+        color: ${({ theme }) => theme.colors.white[400]};
+      }
+
+
 `
 
 
@@ -195,28 +216,53 @@ export default function Home() {
         </TopBar>
       <LayoutWidth>
 
-          <Navbar></Navbar>
+      <Navbar></Navbar>
 
-          {/* <div> */}
-            {/* <Title>Place for <Playfull>playfull</Playfull> conversations</Title> */}
+      <div style={{display: 'flex', gap: '3rem'}}>
 
+        <Title>
+          <h1 style={{fontSize: '3rem', margin: '0 0 auto 0', position: 'sticky', top: '2rem'}}>With mission to simplify conversations.</h1>
+          <p>This project is in development as part of a final project in high school to obtain a high school diploma.</p>
+        </Title>
 
+        <Content>
+            <div>
+              <h2>Introduction</h2>
+              <p>Canpit is web-based video chatting platform for groups of all kinds but specifically focused on groups speaking foreign languages. Created with mission to engage participants with activities and smooth-out conversations.</p>
+            </div>
+            <div>
+              <h2>Main objectives</h2>
+              {/* <p>What drives this project?</p> */}
+              <ol>
+                <li>Engage all participants during conversation</li>
+                <li>Smooth out conversation and make it easier</li>
+                <li>Create playful integrated activities/games</li>
+              </ol>
+            </div>
+            <div>
+              <h2>Prototyping & Development</h2>
+              <p>In devlepomnet since summer of 2022. Project is in early stage.</p>
+              <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                <img src="/img/prototype5.png" alt="" style={{width: '100%'}} />
+                {/* <img src="/img/prototype4.png" alt="" style={{width: '100%'}} /> */}
+                {/* <img src="/img/prototype2.jpg" alt="" style={{width: '100%'}} /> */}
+              </div>
+              <p>... just begginig</p>
+            </div>
+            {/* <div>
+              <h2>Prototyping & Development</h2>
+              <p>Canpit is video chatting platform for groups of all kind which want to have fun with mission to smoothout conversation.</p>
+              <div style={{display: 'flex'}}>
+                <img src="/img/prototype1.png" alt="" style={{width: '50%'}} />
+                <img src="/img/prototype2.jpg" alt="" style={{width: '50%'}} />
+              </div>
+            </div> */}
+        </Content>
 
-            <Title>
-                <img src="/img/homeTitle.svg" style={{width: '100%'}}/>
-            </Title>
+      </div>
 
-            <Link href={'/about'}>
-            <About>
-              <h2 className='title'>About this project</h2>
-                <p>Read more →</p>
-            </About>
-            </Link>
+      <Footer/>
 
-            {/* <img src="/img/block1.svg" alt="" /> */}
-            {/* <CTA className='max'>Setup my room</CTA> */}
-            {/* Place for playfull conversations that you forget time */}
-          {/* </div> */}
       </LayoutWidth>
     </Container>
 

@@ -28,7 +28,7 @@ const Box = styled.div`
   left: 50%;
   translate: -50% -50%;
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.colors.white[200]};
+  background-color: ${({ theme }) => theme.colors.white[100]};
 
   
 

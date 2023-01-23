@@ -7,6 +7,8 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     margin: 0;
     height: 100%;
+    /* width: 100vw; */
+    /* overflow: hidden; */
     background-color: ${({theme}) => theme.colors.black[300]};
     font-family: -apple-system, Inter, SF Pro Display , BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
       Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;

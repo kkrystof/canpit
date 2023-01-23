@@ -1,14 +1,85 @@
 import styled from 'styled-components'
 
 const Container = styled.div`
-  padding: 0 0.5rem;
+  /* padding: 0 0.5rem; */
   display: flex;
   flex-flow: column nowrap;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
-  height: 100vh;
   min-height: 100vh;
+  /* gap: 1rem; */
 `
+
+enum ColorType {
+  bg = 20,
+  border = 15,
+  title = 70,
+  text = 45,
+  overlay= 60
+}
+
+
+const colorShade = (color: any, type: ColorType) => {
+  const colour = color.charAt(0) === "#" ? color.substring(1, 7) : color;
+
+  const r = parseInt(colour.substring(0, 2), 16); // hexToR
+  const g = parseInt(colour.substring(2, 4), 16); // hexToG
+  const b = parseInt(colour.substring(4, 6), 16); // hexToB
+
+  if(type === ColorType.title){
+    return '#' +
+    ((0|(1<<8) + r + (256 - r) * type / 100).toString(16)).substr(1) +
+    ((0|(1<<8) + g + (256 - g) * type / 100).toString(16)).substr(1) +
+    ((0|(1<<8) + b + (256 - b) * type / 100).toString(16)).substr(1);
+  }
+
+
+  return `rgba(${r},${g},${b}, ${type/100})`
+};
+
+const ActivityThnail = styled.div`
+
+      min-width: 220px;
+      /* max-width: 250px; */
+      flex: 3 3 30%;
+      /* width: 33%; */
+      /* height: 180px; */
+      /* height: 160px; */
+      border: 2px solid ${props => colorShade(props.color, ColorType.border)};
+      border-radius: 24px;
+      /* border-radius: 18px; */
+      padding: 14px 14px 14px 14px;
+      box-sizing: border-box;
+      background-color: ${props => colorShade(props.color, ColorType.bg)};
+      transition: all 200ms;
+      /* color: ${props => props.color}; */
+      color: ${props => colorShade(props.color, ColorType.text)};
+      
+      &:hover{
+        /* border: 2px solid ${({ theme }) => theme.colors.white[200]}; */
+        border-color: transparent;
+        background-color: ${props => colorShade(props.color, ColorType.text)};
+        
+      }
+      
+      h3{
+        color: ${props => colorShade(props.color, ColorType.title)};
+        font-size: 18px;
+        font-weight: normal;
+      }
+    
+
+    .icon{
+      height: 80px;
+      width: 80px;
+      background-color: ${props => props.color};
+      border-radius: 10px;
+      cursor: pointer;
+    }
+`
+
+
+
 const Main = styled.main`
   padding: 5rem 0;
   flex: 1;
@@ -35,7 +106,7 @@ const Title = styled.h1`
   /* text-align: center; */
   text-decoration: none;
   z-index: 2;
-  padding: 1rem;
+  /* padding: 1rem; */
 
   a {
     color: ${({ theme }) => theme.colors.secondary};
@@ -194,4 +265,4 @@ const Input = styled.input`
     }
 `
 
-export { Container, Main, Title, Description, CodeTag, Avatar, Button, Playfull, Input, Divider }
+export { Container, Main, Title, Description, CodeTag, Avatar, Button, Playfull, Input, Divider, ActivityThnail }
