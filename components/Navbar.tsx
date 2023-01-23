@@ -98,7 +98,7 @@ export default function Navbar() {
 
 
 
- 
+ //@ts-ignore
 function NavigationLink({ href, text, router }) {
   const isActive = router.asPath === (href === "/home" ? "/" : href);
   return (
