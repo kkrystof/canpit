@@ -247,7 +247,7 @@ export default function Home() {
                 {/* <img src="/img/prototype4.png" alt="" style={{width: '100%'}} /> */}
                 {/* <img src="/img/prototype2.jpg" alt="" style={{width: '100%'}} /> */}
               </div>
-              <p>... just begginig</p>
+              <p>... just beginning</p>
             </div>
             {/* <div>
               <h2>Prototyping & Development</h2>
