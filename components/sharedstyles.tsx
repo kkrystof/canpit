@@ -18,7 +18,6 @@ enum ColorType {
   overlay= 60
 }
 
-
 const colorShade = (color: any, type: ColorType) => {
   const colour = color.charAt(0) === "#" ? color.substring(1, 7) : color;
 

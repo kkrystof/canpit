@@ -1,11 +1,15 @@
-// import { Auth } from '@supabase/ui';
-// import { useUser } from '@supabase/auth-helpers-react';
-// import { supabaseClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
-
-import { Avatar, Button } from '../components/sharedstyles';
-
+import { Button } from '../components/sharedstyles';
+import router, { Router, useRouter } from 'next/router';
+import { motion, useAnimationControls } from 'framer-motion';
+import { useSessionContext, useUser } from '@supabase/auth-helpers-react';
+import { createServerSupabaseClient, withPageAuth } from '@supabase/auth-helpers-nextjs';
+import Dialog from '../components/Dialog';
+import { GetServerSidePropsContext } from 'next';
+import { FiLogOut } from 'react-icons/fi';
+import Avatar from 'react-avatar';
 import styled from 'styled-components'
+
 
 type CardType = {
   avatar?: boolean
@@ -114,20 +118,6 @@ const ActionBtn = styled(motion.button)`
 `
 
 
-// import { useUser, useSessionContext } from '@supabase/auth-helpers-react';
-import Link from 'next/link';
-// import { Drawer } from '@chakra-ui/react';
-// import { Button, TextField, useColorScheme } from '@mui/joy';
-import router, { Router, useRouter } from 'next/router';
-import { motion, useAnimationControls } from 'framer-motion';
-import { useSessionContext, useUser } from '@supabase/auth-helpers-react';
-import { createServerSupabaseClient, withPageAuth } from '@supabase/auth-helpers-nextjs';
-import Dialog from '../components/Dialog';
-import { useFetchToken } from '../components/hooks/useFetchToken';
-import { GetServerSidePropsContext } from 'next';
-import { FiLogOut } from 'react-icons/fi';
-
-
 
 
 const App = () => {
@@ -144,19 +134,11 @@ const App = () => {
         // animation control
 const iconAnim = useAnimationControls()
         // animatin keyframes
-  const sequence = async () => {
+    const sequence = async () => {
       // await iconAnim.start({scale: [1, 0.85 , 1], transition: {default: { ease: "easeInOut" }, repeat: Infinity, duration: 0.20}})
-      await iconAnim.start({scale: [1, 0.85 , 1], rotate: [0, 0, 10, -20, 10, -20, 0, 0], transition: {repeat: Infinity, repeatDelay: 0.7}})
+    await iconAnim.start({scale: [1, 0.85 , 1], rotate: [0, 0, 10, -20, 10, -20, 0, 0], transition: {repeat: Infinity, repeatDelay: 0.7}})
       // await iconAnim.start({scale: 1.02, transition: {default: { ease: "easeInOut" },duration: 0.20}})
-      // return await iconAnim.start({scale: 1})
   }
-
-  const btnTap = async () => {
-    await iconAnim.start({scale: 0.85})
-  }
-
-  // const [tokenData, tokenError, tokenLoading] = useFetchToken(user?.id, '')
-
 
   useEffect(() => {
     if(btn){
@@ -168,29 +150,17 @@ const iconAnim = useAnimationControls()
         console.log(data);
         router.push({pathname: `/room/${data?.roomId}`, query: { tokenQuery: data?.token  }}, `/room/${data?.roomId}`)
       })
-      
-
     }
   }, [btn])
 
   
-
-
-
-
   return (
     <>
-    {/* <div style={{height: '100vh', width: '100vw', background: 'red'}}> */}
-
-    
-
       <Layout>
-        {/* <h2>Canpit</h2> */}
-        {/* {JSON.stringify(user, null, 2)} */}
         <Drower>
           <Card>
             <DrawerThree>
-            <ActionBtn onClick={() => setBtn(true)} whileHover={{background: 'radial-gradient(206.72% 204.88% at 180.67% -6.67%, #6F8BEC 0%, #DF5B56 30.48%, #FFA500 100%)', transition: {duration: 0.35}}} initial={{background: 'radial-gradient(206.72% 204.88% at 106.67% -6.67%, #6F8BEC 0%, #DF5B56 49.48%, #FFA500 100%)'}}>
+            <ActionBtn onClick={() => setBtn(true)} whileHover={{background: 'radial-gradient(206.72% 204.88% at 180.67% -6.67%, #F1F200 0%, #DF5B56 30.48%, #FFA500 100%)', transition: {duration: 0.35}}} initial={{background: 'radial-gradient(206.72% 204.88% at 106.67% -6.67%, #6F8BEC 0%, #DF5B56 49.48%, #FFA500 100%)'}}>
               <div className='inside'>
                 <motion.img animate={iconAnim} initial={{scale: 1}} src="/img/newRoom.svg" height={60} alt="" />
                 <p>Prepare<br/>Room</p>
@@ -204,19 +174,14 @@ const iconAnim = useAnimationControls()
           </Card>
           <Dialog content={<Button onClick={async () => {await supabaseClient.auth.signOut(); router.push('/login')}}>Sign out <FiLogOut/></Button>}>
             <Card avatar>
-              <Avatar src={(user?.user_metadata.avatar_url)? user?.user_metadata.avatar_url : '/img/emo-melt.png'} alt="" />
+              {/* <Avatar src={(user?.user_metadata.avatar_url)? user?.user_metadata.avatar_url : '/img/emo-melt.png'} alt="" /> */}
+              {/* <Avatar googleId="118096717852922241760" size="100" round={true} /> */}
+              <Avatar name={user?.email} size="120" color='white' fgColor='black' style={{fontFamily: 'unset'}} round={true} />
+
             </Card>
           </Dialog>
         </Drower>
-        {/* <Drower>
-          <Card>
-          <Button onClick={logOut}>Sign out</Button>
-          <pre>{JSON.stringify(data, null, 2)}</pre>
-          </Card>
-        </Drower> */}
       </Layout>
-      {/* </div> */}
-
     </>
   );
 };
@@ -231,14 +196,10 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     data: { session },
   } = await supabase.auth.getSession()
 
-    console.log('->', session);
-    console.log(ctx.query);
-    
-    
-    
+    // console.log('->', session);
+    // console.log(ctx.query);
   
   if (!session){
-    console.log('nenene');
     return {
       redirect: {
         destination: '/login',

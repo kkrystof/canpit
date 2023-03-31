@@ -29,7 +29,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     data: { session },
   } = await supabase.auth.getSession()
 
-
   if (!session)
     return {
       redirect: {
@@ -53,8 +52,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 //   voice = "voiceEvent",
 //   chat = "chatEvent"
 // }
-type Event = "queneEvent" | "videoEvent" | "voiceEvent" | "chatEvent"
 
+const LayoutPosition = {
+  1 : "v-right",
+  11 : "v-left",
+  2 : "h-top",
+  22 : "h-bottom"
+}
+type Event = "queneEvent" | "videoEvent" | "voiceEvent" | "chatEvent"
 
 
 
@@ -66,7 +71,7 @@ const roomOptions: RoomOptions = {
 
 const RoomPage: NextPage = (req) => {
 
-  const url = 'wss://livekit.krejci.email';
+  const url = process.env.LIVEKIT_URL;
   const router = useRouter()
   const user = useUser();
 
@@ -74,7 +79,6 @@ const RoomPage: NextPage = (req) => {
   const [tokenData, tokenError, tokenLoading] = useFetchToken(tokenQuery, user?.id, roomID || '')
 
   const [activity, setActivity] = useState(null)
-  // include only in one state
 
   const { connect, isConnecting, room, error, participants, audioTracks } = useRoom(roomOptions);
   const encoder = new TextEncoder()
@@ -87,19 +91,11 @@ const RoomPage: NextPage = (req) => {
   const [activityParticipants, setActivityParticipants] = useState({videos: [], muted: []})
 
 
-
-
   const broadcast = async (type: Event, data: Transport, participantId?: string) => {
     // before sent -> added type of event
     const payload = encoder.encode(JSON.stringify({ type: type, ...data }))
     await room.localParticipant.publishData(payload, DataPacket_Kind.RELIABLE)
   }
-
-
-
-  
-
-
 
 
 
@@ -132,10 +128,11 @@ const RoomPage: NextPage = (req) => {
   const queneStart= (props) => {
     // menu off
     // menuView()
+
+    const act = list[props.id]
     setMenu(false)
-    setActivity({channel: props.channel, ...list[props.id]})
-    setLayout('v-right')
-    
+    setActivity({channel: props.channel, ...act})
+    setLayout(LayoutPosition[act.layout]) 
     console.log('activity started', props)
   }
 
@@ -143,7 +140,6 @@ const RoomPage: NextPage = (req) => {
     setActivity(null);
     setLayout('full')
   }
-
 
 
   //---- VIDEO -----
@@ -162,7 +158,6 @@ const RoomPage: NextPage = (req) => {
     return ids.map((id,i) => <ParticipantView participant={participants.find(p => p.sid === id)} key={i} />)
   }
 
-
   const videoLetgo = (ids) => {
     console.log('in let go functin', ids);
     
@@ -171,20 +166,11 @@ const RoomPage: NextPage = (req) => {
 
 
 
-
-
-
 // called to initiate livekit connection & listening events
   const init = async () => {
-    // console.log('token ->', tokenData?.token);
-
     await connect(url, tokenData?.token);
     // request camera and microphone permissions and publish tracks
     await room.localParticipant.enableCameraAndMicrophone();
-
-    console.log(room);
-    console.log(participants.sid);
-    
 
     room.on(RoomEvent.DataReceived, (payload: Uint8Array) => {
       const data = decoder.decode(payload);
@@ -217,8 +203,8 @@ const RoomPage: NextPage = (req) => {
     queneStart({id: id, channel: chname})
     broadcast('queneEvent', {cmd: 'start', props:{id: id, channel: chname}})
 
-    const link = ['http://localhost:3333/activity', 'https://jazzed-moon-production.up.railway.app/activity', 'http://192.168.88.253:3333/activity']
-    fetch(link[1], {
+    const link = 'https://jazzed-moon-production.up.railway.app/activity'
+    fetch(link[0], {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -268,22 +254,7 @@ const RoomPage: NextPage = (req) => {
 
      <Exit onClick={() => enableCam()} style={{color: 'gray'}}>{inputs.cam ? <FiCamera/> : <FiCameraOff/>}</Exit>
      <Exit onClick={() => enableMic()} style={{color: 'gray', marginLeft: '0.3rem'}}>{inputs.mic ? <FiMic/> : <FiMicOff/>}</Exit>
-     {/* <p onClick={() => console.log(room.localParticipant.isCameraEnabled)}>{room.localParticipant.isCameraEnabled}ppp</p> */}
-      {/* <ol>
-        {participants.map((p,i) => <li key={i}>{p.sid}</li>)}
-      </ol>
 
-      <p>got videos</p>
-      <ol>
-        {activityParticipants.videos.map((p,i) => <li key={i}>{p}</li>)}
-      </ol> */}
-
-      {/* <ol>
-        {audioTracks.map(a => <li>{JSON.stringify(a)}</li>)}
-      </ol> */}
-
-      {/* <p>{JSON.stringify(activity)}</p> */}
-      {/* {showChat && <MessageInput show autoFocus={true}/>} */}
     </div>
 
 {/* animate={menuAnim} initial={{ minWidth: '100vw' }} */}
@@ -318,11 +289,6 @@ const RoomPage: NextPage = (req) => {
 
 
     <Activity>
-      {/* {activity && activity.component(room, actTrans, participants.filter().map((p, i) => <ParticipantView participant={p} key={i}/>))} */}
-      {/* {activity && activity.component(room, actTrans, participants.map((p, i) => <ParticipantView participant={p} key={i}/>))} */}
-      {/* {activity && activity.component(room, actTrans, participants.reduce((obj, cur) => ({...obj, [cur.sid]: <CircleVideo><ParticipantView participant={cur} key={cur.sid}/></CircleVideo> }), {'ids': [...participants.map(p => p.sid)]}))} */}
-      {/* {activity && activity.component( {activity: activity.id, channel: 'notfullyrandomstring', players: [...participants.map(p => p.sid)]} ,participants.filter(p => p.sid === activityParticipants.videos.includes(p)).map((obj, cur) => ({...obj, [cur.sid]: <CircleVideo><ParticipantView participant={cur} key={cur.sid}/></CircleVideo> })))} */}
-      {/* {activity && activity.component( {activity: activity.id, channel: 'notfullyrandomstring', players: [...participants.map(p => p.sid)]}, participants.filter(p => p.sid === activityParticipants.videos.includes(p)).map((obj, cur) => ({...obj, [cur.sid]: <CircleVideo><ParticipantView participant={cur} key={cur.sid}/></CircleVideo>}))  )} */}
       {activity && activity.component( {activity: activity.id, channel: activity.channel, players: [...participants.map(p => p.sid)]}, videoGet, videoLetgo )}
     </Activity>
 
@@ -345,22 +311,18 @@ const RoomPage: NextPage = (req) => {
           <section>
             <h2>New</h2>
             <div className="box">
-                  <ActivityThnail color={list['onlyQuestions'].color}>
-                    <Icon color={list['onlyQuestions'].color} onClick={() => {startActivity(list['onlyQuestions'].id)} } whileTap={{ scale: 0.7, opacity: 1, transition: { duration: 0.15 } }} whileInView={{ opacity: 1 }} />
-                    <h3>{list['onlyQuestions'].title}</h3>
-                    <p>{list['onlyQuestions'].desc.substring(0, 32)}...</p>
+              {
+                Object.keys(list).map((a, i) =>
+                  <ActivityThnail color={list[a].color} key={i}>
+                    <Icon src={`/img/actIcons/${list[a].ico}`} color={list[a].color} onClick={() => {startActivity(list[a].id)} } whileTap={{ scale: 0.7, opacity: 1, transition: { duration: 0.15 } }} whileInView={{ opacity: 1 }} />
+                    <h3>{list[a].title}</h3>
+                    <p>{list[a].desc.substring(0, 32)}...</p>
                   </ActivityThnail>
-
-                  <ActivityThnail color='gray'>
-
-                  </ActivityThnail>
-
-                  {/* <ActivityThnail color='gray'>
-                  </ActivityThnail> */}
-                  
+                )
+              }   
             </div>
           </section>
-          <section>
+          {/* <section>
             <h2>Comming soon</h2>
             <div style={{opacity: 0.2}} className="box">
               {
@@ -373,7 +335,7 @@ const RoomPage: NextPage = (req) => {
                 )
               }
             </div>
-          </section>
+          </section> */}
         </ActivityLib>
       </div>
     </ActivityMenu>
@@ -384,25 +346,19 @@ const RoomPage: NextPage = (req) => {
 }
 
 // export const videoGet = (participants,id: number) => {
-
 //   return <ParticipantView participant={participants.find(p => p.sid === id)} key={i} />
-
 // }
 
 export default RoomPage
-
-
-
-
 interface ParticipantViewProps {
   participant: Participant
 }
+
 
   const ParticipantView = ({ participant }: ParticipantViewProps): ReactElement | null => {
   // isSpeaking, connectionQuality will update when changed
   const { isSpeaking, connectionQuality, isLocal, cameraPublication } = useParticipant(participant)
   
-
   // user has disabled video
   if (cameraPublication?.isMuted ?? true) {
     // render placeholder view
@@ -420,16 +376,10 @@ interface ParticipantViewProps {
     return null;
   }
 
-  // if(isSpeaking){
-  //   return <p>Mluvi hahaha</p>
-  // }
-
   return (
     <VideoRenderer track={cameraPublication.track} isLocal={isLocal} height={'100%'} className='video' />
   )
 }
-
-
 
 
 
@@ -523,8 +473,8 @@ enum ColorType {
   bg = 20,
   border = 15,
   title = 70,
-  text = 45,
-  overlay= 60
+  text = 69,
+  overlay= 20
 }
 
 
@@ -570,8 +520,6 @@ const CircleVideo = styled(motion.div)`
     }
 `
 
-
-
 const Overlay = styled.div`
   position: absolute;
   width: 50vw;
@@ -582,11 +530,9 @@ const Overlay = styled.div`
   background-color: #15130ed4;
 `
 
-
 interface Props {
     show: boolean
   }
-
 
 const ActivityLib = styled.div`
     section{
@@ -657,7 +603,7 @@ const ActivityThnail = styled.div`
     }
 `
 
-const Icon = styled(motion.div)`
+const Icon = styled(motion.img)`
       height: 80px;
       width: 80px;
       background-color: ${props => props.color};
@@ -707,13 +653,6 @@ const ActivityMenu = styled.section`
       padding: 2rem;
       background: ${({ theme }) => theme.colors.white[100]};
       position: relative;
-      /* overflow-y: scroll; */
-
-      
-      .content{
-        /* width: 50vw; */
-
-      }
 
       h2{
         font-weight: normal;

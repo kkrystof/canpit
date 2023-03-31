@@ -82,6 +82,4 @@ p{
 }
 `
 
-
-
 export default TimeLine;

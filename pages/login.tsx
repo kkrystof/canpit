@@ -91,36 +91,11 @@ const Login = ({room}: any) => {
   }
 
 
-//  const register = async () => {
-//   const { data: user, error } = await supabaseClient.auth.api.createUser({
-//     email: 'user@email.com',
-//     password: 'password',
-//     user_metadata: { name: 'Yoda' }
-//   })
-//  }
-
-
-  	// Signup using Google
-	// async function signUpWithGoogle() {
-	// 	const { error } = await supabaseClient.auth.signIn(
-	// 		{
-	// 			provider: 'google'
-	// 		},
-	// 		{ redirectTo: 'http://localhost:3000/provider?refresh=true' }
-	// 	);
-	// 	if (error) {
-	// 		alert(error.message);
-	// 	}
-	// }
-
-
     return (
       <>
       <Box>
         
-            {/* <h1>Before you get inside</h1> */}
-            <h1 style={{color: '#F48B1D'}}>Before you start talking.</h1>
-            {/* <h1 style={{color: '#6F8BEC'}}>Before you start talking.</h1> */}
+            <h1 style={{color: '#F1F200'}}>Before you start talking.</h1>
 
             <Button style={{margin: '1rem auto', backgroundColor: 'white'}} onClick={async () => await supabaseClient.auth.signInWithOAuth({provider: 'google', options: {redirectTo: `http://canpit.com/red${(room) ? '?room='+room : ''}`, queryParams: {room: room}}})}>
                 <img src="/img/glogo.svg" />
@@ -179,11 +154,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       },
   }
 
-  console.log(ctx.query);
-  
+    // console.log(ctx.query);
 
-  
-  
     return {
       props: ctx.query, // will be passed to the page component as props
     }

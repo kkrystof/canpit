@@ -38,12 +38,7 @@ const DialogDemo = ({children, content}) => {
         console.log(data);
         // wait().then(() => setOpen(false));
         // event.preventDefault();
-
         setOpen(false)
-
-        // reset();
-
-
     }
 
 
@@ -59,9 +54,6 @@ const DialogDemo = ({children, content}) => {
         <div className='content'>
 
         <DialogTitle>Settings</DialogTitle>
-        {/* <DialogDescription>
-          Make changes to your profile here. Click save when you&aposre done.
-        </DialogDescription> */}
 
         <Divider/>
 
@@ -196,59 +188,6 @@ const Flex = styled('div')`
     display: flex;
 `;
 
-// const Button = styled('button')`
-//   all: unset;
-//   display: inline-flex;
-//   alignItems: center;
-//   justifyContent: center;
-//   borderRadius: 4;
-//   padding: 0 15px;
-//   fontSize: 15;
-//   lineHeight: 1;
-//   fontWeight: 500;
-//   height: 35;
-
-//   variants: {
-//     variant: {
-//       violet: {
-//         backgroundColor: white;
-//         color: violet.violet11;
-//         boxShadow: 0 2px 10px black;
-//         &:hover: { backgroundColor: red };
-//         &:focus: { boxShadow: 0 0 0 2px black };
-//       };
-//       green: {
-//         backgroundColor: green;
-//         color: green;
-//         &:hover: { backgroundColor: green };
-//         &:focus: { boxShadow: 0 0 0 2px green };
-//       },
-//     },
-//   },
-
-//   defaultVariants: {
-//     variant: 'violet',
-//   },
-// `;
-
-// const IconButton = styled('button', {
-//   all: 'unset',
-//   fontFamily: 'inherit',
-//   borderRadius: '100%',
-//   height: 25,
-//   width: 25,
-//   display: 'inline-flex',
-//   alignItems: 'center',
-//   justifyContent: 'center',
-//   color: violet.violet11,
-//   position: 'absolute',
-//   top: 10,
-//   right: 10,
-
-//   '&:hover': { backgroundColor: violet.violet4 },
-//   '&:focus': { boxShadow: `0 0 0 2px ${violet.violet7}` },
-// });
-
 const Fieldset = styled('fieldset')`
   all: unset;
   display: flex;
@@ -264,23 +203,5 @@ const Label = styled('label')`
   text-align: right;
   padding: 8px 12px 9px 12px;
 `;
-
-// const Input = styled('input')`
-//   all: unset;
-//   width: 100%;
-//   flex: 1;
-//   display: inline-flex;
-//   alignItems: center;
-//   justifyContent: center;
-//   borderRadius: 4;
-//   padding: 0 10px;
-//   fontSize: 15;
-//   lineHeight: 1;
-//   color: violet.violet11;
-//   boxShadow: 0 0 0 1px red;
-//   height: 35;
-
-//   &:focus: { boxShadow: 0 0 0 2px red };
-// `;
 
 export default DialogDemo;

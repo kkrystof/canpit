@@ -14,7 +14,6 @@ import Footer from '../components/Footer'
 import { activitiesList as list } from '../components/acitivies/list';
 
 
-
 const LayoutWidth = styled.div`
     width: 70vw;
     min-width: 700px;
@@ -126,13 +125,9 @@ export default function Home() {
       <div style={{display: 'flex', gap: '3rem'}}>
         <div style={{width: '50%', display: 'flex', flexDirection: 'column',}}>
           <h1 style={{fontSize: '3rem', margin: '0 0 auto 0', position: 'sticky', top: '2rem'}}>Library of Ativities you can play.</h1>
-          {/* <p>This project is in development as part of a final project in high school to obtain the Maturita diploma.</p> */}
         </div>
      
         <Content>
-            {/* <div>
-              <h2>New</h2>
-            </div> */}
             <div>
               <h2>Comming soon</h2>
               <div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem'}}>

@@ -54,12 +54,10 @@ export default function Footer() {
 
   return (
 <Foot>
-{/* <Link href={'/'}>
-  <h2 style={{cursor: 'pointer'}}>Canpit</h2>
-</Link> */}
+
 <img src="/img/footerIcon.svg" height={130} alt="" />
-{/* <div> */}
 <p>Made with love in Czechia.</p>
+{/* <div> */}
 {/* <p>2022 - 2023</p> */}
 {/* </div> */}
 {/* <div className="box">

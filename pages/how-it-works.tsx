@@ -215,16 +215,11 @@ export default function Home() {
           <p style={{color: 'black', textAlign: 'center', fontSize: '0.8em', margin: '0.7em', fontWeight: 500}}>PRE BETA ACCESS</p>
         </TopBar>
       <LayoutWidth>
-
       <Navbar></Navbar>
-
       <div style={{display: 'flex', gap: '3rem'}}>
-
         <Title>
           <h1 style={{fontSize: '3rem', margin: '0 0 auto 0', position: 'sticky', top: '2rem'}}>Rigth place to get answer.</h1>
-          {/* <p>This project is in development as part of a final project in high school to obtain a high school diploma.</p> */}
         </Title>
-
         <Content>
             <div>
               <h2>Questions in process ...</h2>
@@ -233,8 +228,6 @@ export default function Home() {
         </Content>
 
       </div>
-
-
       </LayoutWidth>
     </Container>
       <Footer/>

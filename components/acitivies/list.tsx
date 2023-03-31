@@ -1,11 +1,12 @@
-import { WhoAmI, ClickClick, OnlyQuestions } from '../../components/acitivies';
+import { WhoAmI, OnlyQuestions, BoxOfLies } from '../../components/acitivies';
 
 const myColors = {
     green: '#30D158',
     red: '#FF0000',
     blue: '#2D31FA',
     orange: '#FF6D00',
-    yellow: '#F1F200'
+    yellow: '#FFBA3C'
+    // yellow: '#F1F200'
 }
 
 type ActivityType ={
@@ -23,9 +24,6 @@ type List = {
 
 }
 
-// export const activities:Array<string> = [
-//     'picnic', 'onlyQuestions', 'amongUs', 'whoAmI', 'clickClick'
-// ]
 
 export const activitiesList:Object = {
     // picnic: {
@@ -46,6 +44,7 @@ export const activitiesList:Object = {
         id: 'onlyQuestions',
         title: 'Was that question?',
         color: myColors.yellow,
+        ico: 'ico1.svg',
         layout: 1,
         component: (init: any, videoGet: any, videoLetgo: any) => <OnlyQuestions init={init} videoGet={videoGet} videoLetgo={videoLetgo}/>,
         desc: 'Are you ready speak only in questions? You sad NO?'
@@ -53,17 +52,20 @@ export const activitiesList:Object = {
     whoAmI: { 
         id: 'whoAmI',
         title: 'You are him!',
-        color: myColors.blue,
-        layout: 2,
-        component: (room:any, actTrans: any) => <WhoAmI room={room} trans={actTrans}/>,
+        color: myColors.green,
+        ico: 'ico3.svg',
+        layout: 1,
+        component: (init: any, videoGet: any, videoLetgo: any) => <WhoAmI init={init} videoGet={videoGet} videoLetgo={videoLetgo}/>,
         desc: 'I thought you are the person!'
     },
-    clickClick: { 
-        id: 'clickClick',
+    boxOfLies: { 
+        id: 'boxOfLies',
         title: 'Box of Lies',
-        color: myColors.orange,
+        color: myColors.red,
         layout: 1,
-        component: (room:any, actTrans: any, videos: any) => <ClickClick room={room} trans={actTrans} videos={videos}/>,
+        ico: 'ico2.svg',
+        // eslint-disable-next-line react/jsx-no-undef
+        component: (init: any, videoGet: any, videoLetgo: any) => <BoxOfLies init={init} videoGet={videoGet} videoLetgo={videoLetgo}/>,
         desc: 'Mistery box of unexpected insides'
     },
     // boxOfLies: { 
@@ -80,43 +82,3 @@ export const activitiesList:Object = {
     //     desc: 'Testing activity'
     // }
 }
-
-
-// export const activitiesList:Array<ActivityType> = [
-//     {
-//         id: 'picnic',
-//         title: 'Let\’s have picnic',
-//         color: myColors.green,
-//         layout: 1,
-//         desc: 'Are you hungry? Gess what I have bring in my basket with me?'
-//     },
-//     { 
-//         id: 'onlyQuestions',
-//         title: 'What did you said?',
-//         color: myColors.yellow,
-//         layout: 1,
-//         desc: 'Are you ready speak only in questions? You sad NO?'
-//     },
-//     { 
-//         id: 'amongUs',
-//         title: 'Among us',
-//         color: myColors.red,
-//         layout: 1,
-//         desc: 'haha' },
-//     { 
-//         id: 'whoAmI',
-//         title: 'You are him!',
-//         color: myColors.blue,
-//         layout: 2,
-//         component: (room:any, actTrans: any) => <WhoAmI room={room} trans={actTrans}/>,
-//         desc: 'I thought you are the peson!' },
-//     { 
-//         id: 'boxOfLies',
-//         title: 'Box of lies ...',
-//         color: myColors.red,
-//         layout: 2,
-//         desc: 'Lies are my teritory. So what is in my box?'
-//     },
-// ]
-
-

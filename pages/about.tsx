@@ -64,44 +64,6 @@ const addSaturation = (color: any, amount: number) => {
   return "#" + color.join('');
 }
 
-// const Wave = styled.p`
-//   width: 100%;
-//   color: transparent;
-//   text-decoration-line: underline;
-//   text-decoration-style: wavy;
-//   text-decoration-color: red;
-// `
-
-// const Photos = styled.div`
-//   position: absolute;
-//   background-color: red;
-//   height: 40vh;
-//   width: 50vw;
-//   margin: 5rem auto;
-//   left: 50%;
-//   translate: -50%;
-//   background-position: center;
-//   background-size: ;
-//   background-repeat: no-repeat;
-//   transition: none;
-//   animation: ph 5s infinite;
-
-//   @keyframes ph {
-//     0%   {  background-image: url('/image 54.png');}
-//     25%  {  background-image: url('/image 55.png');}
-//     50%  {  background-image: url('/image 56.png');}
-//     75%  {  background-image: url('/image 58.png');}
-//     100% {  background-image: url('/image 54.png');}
-//   }
-// `
-
-// const Photos = styled.img`
-//   position: absolute;
-//   translate: 50% -40%;
-//   /* filter: grayscale(50%); */
-//   /* mix-blend-mode: color; */
-
-// `
 
 const TopBar = styled.div`
   width: 100%;
@@ -190,18 +152,7 @@ const Title = styled.div`
 
 `
 
-
-
 export default function Home() {
-    //   const [img, setImg] = useState<string>('image 58.png');
-    // const makeTimer = (counter: number) => {
-    //       console.log(counter);
-    //       const imgs = ['image 54.png', 'image 55.png', 'image 56.png', 'image 58.png']
-    //       setImg(imgs[counter])
-    //       counter = (counter === 3) ? 0 : counter++
-
-    //       setTimeout(makeTimer(counter), 2000)
-    // }
 
   return (
     <>
@@ -232,7 +183,6 @@ export default function Home() {
             </div>
             <div>
               <h2>Main objectives</h2>
-              {/* <p>What drives this project?</p> */}
               <ol>
                 <li>Engage all participants during conversation</li>
                 <li>Smooth out conversation and make it easier</li>
@@ -249,14 +199,6 @@ export default function Home() {
               </div>
               <p>... just beginning</p>
             </div>
-            {/* <div>
-              <h2>Prototyping & Development</h2>
-              <p>Canpit is video chatting platform for groups of all kind which want to have fun with mission to smoothout conversation.</p>
-              <div style={{display: 'flex'}}>
-                <img src="/img/prototype1.png" alt="" style={{width: '50%'}} />
-                <img src="/img/prototype2.jpg" alt="" style={{width: '50%'}} />
-              </div>
-            </div> */}
         </Content>
 
       </div>

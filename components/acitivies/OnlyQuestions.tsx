@@ -1,26 +1,13 @@
 //@ts-nocheck
 import React, { ReactElement, useEffect, useState } from 'react';
-
-
-
 import styled, { keyframes } from 'styled-components'
 import { useForm, SubmitHandler } from "react-hook-form";
-
-import { DataPacket_Kind, Participant } from 'livekit-client';
-import { useParticipant, VideoRenderer } from '@livekit/react-components';
-import { createClient} from '@supabase/supabase-js';
-import { stringify } from 'querystring';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { supabase } from '../supabaseClient';
 import { motion } from 'framer-motion';
-
-// import {} from '../../pages/room/[roomID]'
-
 
 
 const OnlyQuestions = ({init, videoGet, videoLetgo}) => {
 
-  // const supabaseClient = useSupabaseClient()
   const supabaseClient = supabase
   
   const channel = supabaseClient.channel(init.channel)
@@ -36,8 +23,6 @@ const OnlyQuestions = ({init, videoGet, videoLetgo}) => {
       })
 }
 
-//   const [number, setNumber] = useState(1000)
-//   const [activPlayers, setActivPlayers] = useState([])
 
 
 channel.subscribe((status) => {
@@ -57,10 +42,6 @@ channel.subscribe((status) => {
   }
   
   const cmdHandler = ({cmd, props} : handlerType) => {
-
-    // console.log('-> tady dopice', cmd, props);
-    
-
     const cmds = {
       'initPlayers': (props) => {
         setTwoPlayers(props.twoPlayers)
@@ -134,9 +115,6 @@ channel.subscribe((status) => {
 
   return <>
   <Layout>
-    {/* <p>{}</p> */}
-
-    {/* <p>{JSON.stringify(striked)}</p> */}
 
 {(twoPlayers) ?
     <Arena>
@@ -176,11 +154,14 @@ channel.subscribe((status) => {
 
     :
 
-    <div>
+    <ActMenu>
+      <img src="/img/actIcons/ico1.svg" alt="" />
       <h1>Speak with questions ONLY!</h1>
       <p style={{width: '100%'}}>If any of the players do otherwise - KICK him out as you CLICK on his BUBBLE. If most of the players do the same player is eliminated and the next one takes his place.</p>
-      <button onClick={iAmReady}>I am ready</button>
-    </div>
+      <Btn onClick={iAmReady}>I am ready</Btn>
+      {/* <button class="button-10" role="button">Button 10</button> */}
+
+    </ActMenu>
 
 }
 
@@ -199,6 +180,55 @@ const Player = styled(motion.div)`
 
 `
 
+const Btn = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 14px;
+  // font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  border-radius: 8px;
+  border: none;
+
+  cursor: pointer;
+
+  color: #fff;
+  background: linear-gradient(180deg, #FF5252 0%, #FF0000 100%);
+   background-origin: border-box;
+  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+
+
+  &:focus {
+  box-shadow: inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2), 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), 0px 0px 0px 3.5px rgba(58, 108, 217, 0.5);
+  outline: 0;
+}
+`
+
+const ActMenu = styled.div`
+  backdrop-filter: blur(4px);
+  border: solid 2px #FFBA3C;
+  border-radius: 15px;
+  padding: 2rem;
+  top: 50%;
+  transform: translate(0, -50%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  position: relative;
+  box-shadow: rgba(17, 12, 46, 0.1) 0px 48px 100px 0px;
+  background-color: rgba(255, 255, 255, 0.5);
+
+
+
+  img{
+    width: max-content;
+    // margin: 0 auto;
+  }
+`
+
 const Layout = styled.div`
 
 color: black;
@@ -207,14 +237,15 @@ width: 50vw;
 padding: 3rem;
 
 
-background-color: #F1F200;
-background-image: url('/img/pattern.png');
-background-size: 170px 170px;
+background-color: #FFBA3C;
+background-image: url('/img/patt.svg');
+background-size: 160px 160px;
 background-repeat: repeat;
+
+
 /* opacity: 1;
 background-image:  linear-gradient(135deg, #F1F200 25%, transparent 25%), linear-gradient(225deg, #F1F200 25%, transparent 25%), linear-gradient(45deg, #F1F200 25%, transparent 25%), linear-gradient(315deg, #F1F200 25%, rgba(255,255,255, 0.3) 25%);
 background-position:  20px 0, 20px 0, 0 0, 0 0;
-background-size: 40px 40px;
 background-repeat: repeat; */
 
 `

@@ -1,17 +1,20 @@
 //@ts-nocheck
 import React, { ReactElement, useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components'
+
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { supabase } from '../supabaseClient';
 import { motion } from 'framer-motion';
 
-
-
-
-const whoAmI = ({init, videoGet, videoLetgo}) => {
+const BoxOfLies = ({init, videoGet, videoLetgo}) => {
 
   const supabaseClient = supabase
-  const channel = supabaseClient.channel(init.channel)
   
+  const channel = supabaseClient.channel(init.channel)
+
+  console.log(init.channel);
+  
+
   const send = (data: object) => {
     channel.send({
         type: 'broadcast',
@@ -19,6 +22,7 @@ const whoAmI = ({init, videoGet, videoLetgo}) => {
         payload: data,
       })
 }
+
 
 channel.subscribe((status) => {
     if (status === 'SUBSCRIBED') {
@@ -37,9 +41,6 @@ channel.subscribe((status) => {
   }
   
   const cmdHandler = ({cmd, props} : handlerType) => {
-
-    // console.log('-> tady dopice', cmd, props);
-    
 
     const cmds = {
       'initPlayers': (props) => {
@@ -120,16 +121,34 @@ channel.subscribe((status) => {
 
 {(twoPlayers) ?
     <Arena>
-    <Player transition={{type: 'spring', duration: 0.2}}>
+    <Player whileTap={{x: [0, 5, -5, 0]}} transition={{type: 'spring', duration: 0.2}}>
+        {/* <p>{twoPlayers[0]} - {strikes[twoPlayers[0]]}❌</p> */}
         <CircleVideo onClick={() => {
           send({cmd: 'strike', props: {id: twoPlayers[0]}});
+          // if(!striked[0]){
+          //   let s = striked
+          //   s[0] = true
+          //   setStriked(s)
+          //   // setStriked([...striked, twoPlayers[0]])
+          // }
         }}>
           {video[0]}
         </CircleVideo>
     </Player>
+      <img src="/img/vs.png" width={250} style={{margin: '0 auto'}} alt="" />
       <Player whileTap={{x: [0, 5, -5, 0]}} transition={{type: 'spring', duration: 0.2}}>
+      {/* <p>{twoPlayers[1]} - {strikes[twoPlayers[1]]}❌</p> */}
         <CircleVideo onClick={() => {
           send({cmd: 'strike', props: {id: twoPlayers[1]}});
+          // if(!striked[1]){
+          //    let s = striked
+          //    s[1] = true
+          //    setStriked(s)
+          //   //  setStriked([...striked, twoPlayers[1]])
+          // }else{
+          //   console.log('nic');
+            
+          // }
         }}>
           {video[1]}
         </CircleVideo>
@@ -139,29 +158,42 @@ channel.subscribe((status) => {
     :
 
     <div style={{color: 'white'}}>
-      <h1>Guess Who am I?</h1>
-      <p style={{width: '100%'}}>You become someone or something and each of you waits in line before you can ask question and expose your oponent.</p>
-      <button onClick={iAmReady}>Let's guess!</button>
+      <h1>Lies, thruths & RED flags</h1>
+      <p style={{width: '100%'}}>After carefully preview your item, choose the your side, lying or telling the truth, that's on you. Others have to spot lies catch you if you're telling the truth.</p>
+      <button onClick={iAmReady}>Don't forgot lie!</button>
     </div>
 
 }
+
   </Layout>
   </>
 };
 
 
 
-export default whoAmI;
+export default BoxOfLies;
+
+const Player = styled(motion.div)`
+
+`
 
 const Layout = styled.div`
+
 color: black;
 height: 100%;
 width: 50vw;
 padding: 3rem;
 
-background-color: #2D31FA;
+
+background-color: #FF0000;
+/* background-image: url('/img/pattern.png'); */
 background-size: 170px 170px;
 background-repeat: repeat;
+/* opacity: 1;
+background-image:  linear-gradient(135deg, #F1F200 25%, transparent 25%), linear-gradient(225deg, #F1F200 25%, transparent 25%), linear-gradient(45deg, #F1F200 25%, transparent 25%), linear-gradient(315deg, #F1F200 25%, rgba(255,255,255, 0.3) 25%);
+background-position:  20px 0, 20px 0, 0 0, 0 0;
+background-size: 40px 40px;
+background-repeat: repeat; */
 
 `
 
@@ -173,11 +205,14 @@ const Arena = styled.div`
   translate: -50% -50%; */
   flex-direction: column;
   width: max-content;
+  /* margin: 0 auto; */
+  /* gap: 100px; */
 
   position: relative;
   left: 50%;
   top: 50%;
   translate: -50% -50%;
+
 `
 
 const CircleVideo = styled.div`

@@ -194,29 +194,16 @@ export default function Home() {
           <p style={{color: 'black', textAlign: 'center', fontSize: '0.8em', margin: '0.7em', fontWeight: 500}}>PRE BETA ACCESS</p>
         </TopBar>
       <LayoutWidth>
-
           <Navbar></Navbar>
-
-          {/* <div> */}
-            {/* <Title>Place for <Playfull>playfull</Playfull> conversations</Title> */}
-
-
-
             <Title>
                 <img src="/img/homeTitle.svg" style={{width: '100%'}}/>
             </Title>
-
             <Link href={'/about'}>
             <About>
               <h2 className='title'>About this project</h2>
                 <p>Read more →</p>
             </About>
             </Link>
-
-            {/* <img src="/img/block1.svg" alt="" /> */}
-            {/* <CTA className='max'>Setup my room</CTA> */}
-            {/* Place for playfull conversations that you forget time */}
-          {/* </div> */}
       </LayoutWidth>
     </Container>
 

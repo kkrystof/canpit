@@ -1,2 +1,2 @@
 # Canpit
-## The only platform for playfull conversations even with strangers.
+## The platform for playful conversations even with strangers.
